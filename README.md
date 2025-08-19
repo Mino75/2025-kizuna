@@ -1,2 +1,1 @@
-# Resizer
-Dia Game
+# kizuna
