@@ -472,11 +472,12 @@
             setTimeout(createMenu, 100);
 //            if (CONFIG.enablePrivacy) {
 //                setTimeout(showPrivacyPopup, 1500);
-            }
+//            }
         }
     }
 
     // Start initialization
     init();
 })();
+
 
