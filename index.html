@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kizuna - Web Enhancement Tool</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="kizuna-container">
+        <header id="kizuna-header">
+            <h1>Kizuna</h1>
+            <p>Web Enhancement & Learning Tool</p>
+        </header>
+        
+        <main id="kizuna-main">
+            <section id="kizuna-features">
+                <div class="feature-card">
+                    <h3>Auto Scroll</h3>
+                    <p>Intelligent scrolling with zoom awareness</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>Interactive Quiz</h3>
+                    <p>Test your knowledge with dynamic quizzes</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>JS Sandbox</h3>
+                    <p>Safe JavaScript execution environment</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>Privacy Compliant</h3>
+                    <p>GDPR/RGPD ready with full transparency</p>
+                </div>
+            </section>
+            
+            <section id="kizuna-integration">
+                <h2>Integration</h2>
+                <p>Add Kizuna to your website with a simple script tag:</p>
+                <code id="integration-code">
+                    &lt;script defer src="https://kizuna.kahiether.com/main.js" 
+                    website-url="your-website.com"
+                    personalinfostored="no"
+                    enablemdquizz="yes"
+                    enablejssandbox="no"
+                    enableprivacy="yes"&gt;&lt;/script&gt;
+                </code>
+            </section>
+        </main>
+        
+        <footer id="kizuna-footer">
+            <p>&copy; 2025 Kizuna - MIT License</p>
+        </footer>
+    </div>
+    
+    <!-- Privacy Modal -->
+    <div id="privacy-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Privacy Notice</h2>
+            <div id="privacy-content"></div>
+            <div class="modal-buttons">
+                <button id="accept-privacy" class="btn-primary">Accept</button>
+                <button id="decline-privacy" class="btn-secondary">Decline</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- JS Sandbox Modal -->
+    <div id="sandbox-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>JavaScript Sandbox</h2>
+            <textarea id="js-input" placeholder="Enter your JavaScript code here..."></textarea>
+            <div class="modal-buttons">
+                <button id="run-js" class="btn-primary">Run Code</button>
+                <button id="clear-js" class="btn-secondary">Clear</button>
+            </div>
+            <div id="js-output"></div>
+        </div>
+    </div>
+    
+    <script src="main.js"></script>
+</body>
+</html>
