@@ -38,22 +38,12 @@
         popup.innerHTML = `
             <div class="kizuna-privacy-content">
                 <h3>Privacy & GDPR Compliance</h3>
-                <p>Your privacy is important to us. This application is designed to comply with the General Data Protection Regulation (GDPR) and to ensure that your personal data remains under your control at all times.</p>
-        
-                <p><strong>Data Storage:</strong> No personal data is ever transmitted or stored on our servers. All information generated or used by this application is kept exclusively within your own browser and device. You remain in full control of your data at all times.</p>
-        
-                <p><strong>No Commercial Use:</strong> None of your data is sold, shared, or commercialized in any way. We do not build user profiles, and we do not use your data for advertising or behavioral tracking purposes.</p>
-        
-                <p><strong>Analytics with Umami:</strong> To help us understand and improve how this website is used, we employ Umami, a privacy-friendly analytics tool. Umami only collects standard, aggregated, and anonymized data such as page views, device type, operating system, browser, and approximate geolocation (country level). This information cannot be used to identify you personally and is never combined with other datasets.</p>
-        
-                <p><strong>Your Rights:</strong> Under GDPR, you have the right to access, rectify, delete, and restrict the processing of your personal data. In this case, since no personal data is collected or stored on our servers, your privacy is inherently safeguarded without requiring further action.</p>
-        
+                <p>Your privacy is important to us. This application is designed to comply with the General Data Protection Regulation (GDPR) and to ensure that your personal data remains under your control at all times.</p>        
+                <p><strong>Data Storage:</strong> No personal data is ever transmitted or stored on our servers. All information generated or used by this application is kept exclusively within your own browser and device. You remain in full control of your data at all times.</p>        
+                <p><strong>No Commercial Use:</strong> None of your data is sold, shared, or commercialized in any way. We do not build user profiles, and we do not use your data for advertising or behavioral tracking purposes.</p>        
+                <p><strong>Analytics with Umami:</strong> To help us understand and improve how this website is used, we employ Umami, a privacy-friendly analytics tool. Umami only collects standard, aggregated, and anonymized data such as page views, device type, operating system, browser, and approximate geolocation (country level). This information cannot be used to identify you personally and is never combined with other datasets.</p>       
+                <p><strong>Your Rights:</strong> Under GDPR, you have the right to access, rectify, delete, and restrict the processing of your personal data. In this case, since no personal data is collected or stored on our servers, your privacy is inherently safeguarded without requiring further action.</p>        
                 <p><strong>Consent:</strong> By continuing to use this website, you consent to the limited, anonymized analytics described above and to the local processing of data required for the functionality of this application.</p>
-        
-                <div class="kizuna-privacy-buttons">
-                    <button onclick="this.closest('#privacy-popup').remove()">Accept</button>
-                    <button onclick="window.location.href='about:blank'">Decline</button>
-                </div>
             </div>
         `;
 
@@ -479,6 +469,7 @@
     // Start initialization
     init();
 })();
+
 
 
 
