@@ -37,7 +37,6 @@
         popup.id = 'kizuna-privacy-popup';
         popup.innerHTML = `
             <div class="kizuna-privacy-content">
-            
                 <h3>Privacy & GDPR Compliance</h3>
                 <p>Your privacy is important to us. This application is designed to comply with the General Data Protection Regulation (GDPR) and to ensure that your personal data remains under your control at all times.</p>        
                 <p><strong>Data Storage:</strong> No personal data is ever transmitted or stored on our servers. All information generated or used by this application is kept exclusively within your own browser and device. You remain in full control of your data at all times.</p>        
@@ -45,9 +44,11 @@
                 <p><strong>Analytics with Umami:</strong> To help us understand and improve how this website is used, we employ Umami, a privacy-friendly analytics tool. Umami only collects standard, aggregated, and anonymized data such as page views, device type, operating system, browser, and approximate geolocation (country level). This information cannot be used to identify you personally and is never combined with other datasets.</p>       
                 <p><strong>Your Rights:</strong> Under GDPR, you have the right to access, rectify, delete, and restrict the processing of your personal data. In this case, since no personal data is collected or stored on our servers, your privacy is inherently safeguarded without requiring further action.</p>        
                 <p><strong>Consent:</strong> By continuing to use this website, you consent to the limited, anonymized analytics described above and to the local processing of data required for the functionality of this application.</p>
+                <p><strong>Website:</strong> ${CONFIG.websiteUrl}</p>
+                <p><strong>Personal Information Stored:</strong> ${CONFIG.personalInfoStored === 'yes' ? 'This website stores personal information' : 'This website does not store personal information'}</p>
             </div>
             <div class="kizuna-privacy-buttons">
-            <button onclick="this.closest('#kizuna-privacy-popup').remove(); document.body.classList.remove('no-scroll');">Close</button>
+                <button onclick="this.closest('#kizuna-privacy-popup').remove(); document.body.classList.remove('no-scroll');">Close</button>
             </div>
         `;
 
@@ -144,6 +145,224 @@
         return content && content.trim().length > 0 && !/^[a-zA-Z0-9\s\-\.,]*$/.test(content.trim());
     }
 
+    function startQuiz(isAdvanced) {
+        if (!CONFIG.enableMdQuizz) {
+            alert('Quiz feature is disabled for this website.');
+            return;
+        }
+
+        const rows = Array.from(document.querySelectorAll("table tbody tr"));
+        if (rows.length === 0) {
+            alert('No table data found on this page. The quiz feature requires a table with questions and answers.');
+            return;
+        }
+
+        // Sanitizer for advanced mode
+        const sanitize = (s) => {
+            if (!isAdvanced) return (s || '').trim();
+            return (s || '')
+                .normalize("NFD")
+                .replace(/[a-zA-Z0-9()\.\,~\u0300-\u036f]/g, "")
+                .replace(/\s+/g, " ")
+                .trim();
+        };
+
+        const firstCells = rows[0].querySelectorAll("td");
+        const colCount = firstCells.length;
+        if (colCount < 2) {
+            alert('Need at least 2 columns (question + answer).');
+            return;
+        }
+
+        const maxQuestions = Math.min(20, rows.length);
+        const usedRows = new Set();
+        const selectedQuestions = [];
+
+        // Randomly pick rows; for each, choose a valid answer column (1..colCount-1)
+        let guard = rows.length * 4; // avoid infinite loops on sparse tables
+        while (selectedQuestions.length < maxQuestions && guard-- > 0) {
+            const randomRowIndex = Math.floor(Math.random() * rows.length);
+            if (usedRows.has(randomRowIndex)) continue;
+
+            const row = rows[randomRowIndex];
+            const cells = row.querySelectorAll("td");
+            if (!cells || cells.length < 2) continue;
+
+            const questionText = (cells[0]?.textContent || '').trim();
+            if (!questionText) continue;
+
+            // Find answer columns that have valid content
+            const validCols = [];
+            for (let c = 1; c < cells.length; c++) {
+                const raw = cells[c]?.textContent || '';
+                if (isValidCell(sanitize(raw))) validCols.push(c);
+            }
+            if (validCols.length === 0) continue;
+
+            // Choose a random valid answer column for this row
+            const answerCol = validCols[Math.floor(Math.random() * validCols.length)];
+            const correctRaw = (cells[answerCol]?.textContent || '').trim();
+            const correctAnswer = sanitize(correctRaw);
+            if (!isValidCell(correctAnswer)) continue;
+
+            selectedQuestions.push({
+                question: questionText,
+                correctAnswer,
+                correctRaw,
+                answerCol,
+                rowIndex: randomRowIndex
+            });
+            usedRows.add(randomRowIndex);
+        }
+
+        if (selectedQuestions.length === 0) {
+            alert('Could not generate quiz questions from the table data. Please ensure the table has valid question–answer pairs.');
+            return;
+        }
+
+        // Remove existing quiz if any
+        const existingQuiz = document.getElementById('kizuna-quiz-container');
+        if (existingQuiz) existingQuiz.remove();
+
+        const quizContainer = document.createElement('div');
+        quizContainer.id = 'kizuna-quiz-container';
+        document.body.appendChild(quizContainer);
+
+        let score = 0;
+        let timer;
+        const results = [];
+
+        function askQuestion(index) {
+            if (index >= selectedQuestions.length) {
+                showRecap();
+                return;
+            }
+
+            const current = selectedQuestions[index];
+            const { question, correctAnswer, correctRaw, answerCol, rowIndex } = current;
+
+            // Gather distractors from the SAME column in other rows
+            const pool = [];
+            rows.forEach((r, i) => {
+                if (i === rowIndex) return;
+                const cell = r.querySelectorAll("td")[answerCol];
+                if (!cell) return;
+                const raw = (cell.textContent || '').trim();
+                const val = sanitize(raw);
+                if (isValidCell(val) && val !== correctAnswer) pool.push(val);
+            });
+
+            // Unique + pick up to 3
+            const incorrectAnswers = [...new Set(pool)].sort(() => 0.5 - Math.random()).slice(0, 3);
+            while (incorrectAnswers.length < 3) {
+                incorrectAnswers.push(`Option ${incorrectAnswers.length + 2}`);
+            }
+
+            const options = [correctAnswer, ...incorrectAnswers].sort(() => 0.5 - Math.random());
+
+            quizContainer.innerHTML = `
+                <h3>Question ${index + 1}/${selectedQuestions.length}</h3>
+                <h4>${question}</h4>
+            `;
+
+            if (isAdvanced) {
+                const timerDisplay = document.createElement('div');
+                timerDisplay.className = 'kizuna-timer-display';
+                quizContainer.appendChild(timerDisplay);
+
+                let timeLeft = 10;
+                timerDisplay.textContent = `Time: ${timeLeft}s`;
+                timer = setInterval(() => {
+                    timeLeft--;
+                    timerDisplay.textContent = `Time: ${timeLeft}s`;
+                    if (timeLeft <= 0) {
+                        clearInterval(timer);
+                        results.push({
+                            question,
+                            correctAnswer: correctRaw,
+                            userAnswer: null,
+                            result: "❌ Time Out"
+                        });
+                        askQuestion(index + 1);
+                    }
+                }, 1000);
+            }
+
+            options.forEach(option => {
+                const optionButton = document.createElement('button');
+                optionButton.textContent = option;
+                optionButton.className = 'kizuna-quiz-option';
+                optionButton.addEventListener('click', () => {
+                    if (timer) clearInterval(timer);
+
+                    const isCorrect = option === correctAnswer;
+
+                    // Lock + color feedback
+                    quizContainer.querySelectorAll('.kizuna-quiz-option').forEach(btn => {
+                        btn.disabled = true;
+                        if (btn.textContent === correctAnswer) {
+                            btn.style.backgroundColor = 'green';
+                            btn.style.color = 'white';
+                        } else if (btn === optionButton && !isCorrect) {
+                            btn.style.backgroundColor = 'red';
+                            btn.style.color = 'white';
+                        }
+                    });
+
+                    if (isCorrect) score++;
+
+                    results.push({
+                        question,
+                        correctAnswer: correctRaw,
+                        userAnswer: option,
+                        result: isCorrect ? "✅ Correct" : "❌ Wrong"
+                    });
+
+                    setTimeout(() => askQuestion(index + 1), 1500);
+                });
+                quizContainer.appendChild(optionButton);
+            });
+        }
+
+        function showRecap() {
+            const percentage = Math.round((score / selectedQuestions.length) * 100);
+
+            let emoji = '';
+            let message = '';
+            if (percentage >= 90) { emoji = '🎉🎊'; message = 'Excellent!'; }
+            else if (percentage >= 70) { emoji = '🌟'; message = 'Great Job!'; }
+            else if (percentage >= 50) { emoji = '👍'; message = 'Good Effort!'; }
+            else { emoji = '📚'; message = 'Keep Practicing!'; }
+
+            quizContainer.innerHTML = `
+                <h3>Quiz Complete!</h3>
+                <div style="font-size: 48px; margin: 20px 0;">${emoji}</div>
+                <div style="font-size: 36px; color: ${percentage >= 70 ? 'green' : 'orange'};">
+                    ${score}/${selectedQuestions.length} (${percentage}%)
+                </div>
+                <p style="font-size: 24px; margin: 20px 0;">${message}</p>
+                <h4>Review:</h4>
+            `;
+
+            results.forEach((r, i) => {
+                const reviewDiv = document.createElement('p');
+                reviewDiv.innerHTML = `
+                    <strong>${i + 1}.</strong> ${r.question}<br>
+                    <span style="color: green;">Answer: ${r.correctAnswer}</span><br>
+                    <span>${r.result}</span>
+                `;
+                quizContainer.appendChild(reviewDiv);
+            });
+
+            const closeButton = document.createElement('button');
+            closeButton.textContent = 'Close';
+            closeButton.className = 'kizuna-quiz-close';
+            closeButton.addEventListener('click', () => quizContainer.remove());
+            quizContainer.appendChild(closeButton);
+        }
+
+        askQuestion(0);
+    }
 
     // Create menu
     function createMenu() {
@@ -153,229 +372,7 @@
         burger.id = 'kizuna-burger';
         burger.textContent = '☰';
 
-        const function startQuiz(isAdvanced) {
-    if (!CONFIG.enableMdQuizz) {
-        alert('Quiz feature is disabled for this website.');
-        return;
-    }
-
-    const rows = Array.from(document.querySelectorAll("table tbody tr"));
-    if (rows.length === 0) {
-        alert('No table data found on this page. The quiz feature requires a table with questions and answers.');
-        return;
-    }
-
-    // keep your existing validity rule
-    function isValidCell(content) {
-        return content && content.trim().length > 0 && !/^[a-zA-Z0-9\s\-\.,]*$/.test(content.trim());
-    }
-
-    // sanitizer for advanced mode (same spirit as your original)
-    const sanitize = (s) => {
-        if (!isAdvanced) return (s || '').trim();
-        return (s || '')
-            .normalize("NFD")
-            .replace(/[a-zA-Z0-9()\.\,~\u0300-\u036f]/g, "")
-            .replace(/\s+/g, " ")
-            .trim();
-    };
-
-    const firstCells = rows[0].querySelectorAll("td");
-    const colCount = firstCells.length;
-    if (colCount < 2) {
-        alert('Need at least 2 columns (question + answer).');
-        return;
-    }
-
-    const maxQuestions = Math.min(20, rows.length);
-    const usedRows = new Set();
-    const selectedQuestions = [];
-
-    // randomly pick rows; for each, choose a valid answer column (1..colCount-1)
-    let guard = rows.length * 4; // avoid infinite loops on sparse tables
-    while (selectedQuestions.length < maxQuestions && guard-- > 0) {
-        const randomRowIndex = Math.floor(Math.random() * rows.length);
-        if (usedRows.has(randomRowIndex)) continue;
-
-        const row = rows[randomRowIndex];
-        const cells = row.querySelectorAll("td");
-        if (!cells || cells.length < 2) continue;
-
-        const questionText = (cells[0]?.textContent || '').trim();
-        if (!questionText) continue;
-
-        // find answer columns that have valid content
-        const validCols = [];
-        for (let c = 1; c < cells.length; c++) {
-            const raw = cells[c]?.textContent || '';
-            if (isValidCell(sanitize(raw))) validCols.push(c);
-        }
-        if (validCols.length === 0) continue;
-
-        // choose a random valid answer column for this row
-        const answerCol = validCols[Math.floor(Math.random() * validCols.length)];
-        const correctRaw = (cells[answerCol]?.textContent || '').trim();
-        const correctAnswer = sanitize(correctRaw);
-        if (!isValidCell(correctAnswer)) continue;
-
-        selectedQuestions.push({
-            question: questionText,
-            correctAnswer,
-            correctRaw,
-            answerCol,
-            rowIndex: randomRowIndex
-        });
-        usedRows.add(randomRowIndex);
-    }
-
-    if (selectedQuestions.length === 0) {
-        alert('Could not generate quiz questions from the table data. Please ensure the table has valid question–answer pairs.');
-        return;
-    }
-
-    // remove existing quiz if any
-    const existingQuiz = document.getElementById('kizuna-quiz-container');
-    if (existingQuiz) existingQuiz.remove();
-
-    const quizContainer = document.createElement('div');
-    quizContainer.id = 'kizuna-quiz-container';
-    document.body.appendChild(quizContainer);
-
-    let score = 0;
-    let timer;
-    const results = [];
-
-    function askQuestion(index) {
-        if (index >= selectedQuestions.length) {
-            showRecap();
-            return;
-        }
-
-        const current = selectedQuestions[index];
-        const { question, correctAnswer, correctRaw, answerCol, rowIndex } = current;
-
-        // gather distractors from the SAME column in other rows
-        const pool = [];
-        rows.forEach((r, i) => {
-            if (i === rowIndex) return;
-            const cell = r.querySelectorAll("td")[answerCol];
-            if (!cell) return;
-            const raw = (cell.textContent || '').trim();
-            const val = sanitize(raw);
-            if (isValidCell(val) && val !== correctAnswer) pool.push(val);
-        });
-
-        // unique + pick up to 3
-        const incorrectAnswers = [...new Set(pool)].sort(() => 0.5 - Math.random()).slice(0, 3);
-        while (incorrectAnswers.length < 3) {
-            incorrectAnswers.push(`Option ${incorrectAnswers.length + 2}`);
-        }
-
-        const options = [correctAnswer, ...incorrectAnswers].sort(() => 0.5 - Math.random());
-
-        quizContainer.innerHTML = `
-            <h3>Question ${index + 1}/${selectedQuestions.length}</h3>
-            <h4>${question}</h4>
-        `;
-
-        if (isAdvanced) {
-            const timerDisplay = document.createElement('div');
-            timerDisplay.className = 'kizuna-timer-display';
-            quizContainer.appendChild(timerDisplay);
-
-            let timeLeft = 10;
-            timerDisplay.textContent = `Time: ${timeLeft}s`;
-            timer = setInterval(() => {
-                timeLeft--;
-                timerDisplay.textContent = `Time: ${timeLeft}s`;
-                if (timeLeft <= 0) {
-                    clearInterval(timer);
-                    results.push({
-                        question,
-                        correctAnswer: correctRaw,
-                        userAnswer: null,
-                        result: "❌ Time Out"
-                    });
-                    askQuestion(index + 1);
-                }
-            }, 1000);
-        }
-
-        options.forEach(option => {
-            const optionButton = document.createElement('button');
-            optionButton.textContent = option;
-            optionButton.className = 'kizuna-quiz-option';
-            optionButton.addEventListener('click', () => {
-                if (timer) clearInterval(timer);
-
-                const isCorrect = option === correctAnswer;
-
-                // lock + color feedback
-                quizContainer.querySelectorAll('.kizuna-quiz-option').forEach(btn => {
-                    btn.disabled = true;
-                    if (btn.textContent === correctAnswer) {
-                        btn.style.backgroundColor = 'green';
-                        btn.style.color = 'white';
-                    } else if (btn === optionButton && !isCorrect) {
-                        btn.style.backgroundColor = 'red';
-                        btn.style.color = 'white';
-                    }
-                });
-
-                if (isCorrect) score++;
-
-                results.push({
-                    question,
-                    correctAnswer: correctRaw,
-                    userAnswer: option,
-                    result: isCorrect ? "✅ Correct" : "❌ Wrong"
-                });
-
-                setTimeout(() => askQuestion(index + 1), 1500);
-            });
-            quizContainer.appendChild(optionButton);
-        });
-    }
-
-    function showRecap() {
-        const percentage = Math.round((score / selectedQuestions.length) * 100);
-
-        let emoji = '';
-        let message = '';
-        if (percentage >= 90) { emoji = '🎉🎊'; message = 'Excellent!'; }
-        else if (percentage >= 70) { emoji = '🌟'; message = 'Great Job!'; }
-        else if (percentage >= 50) { emoji = '👍'; message = 'Good Effort!'; }
-        else { emoji = '📚'; message = 'Keep Practicing!'; }
-
-        quizContainer.innerHTML = `
-            <h3>Quiz Complete!</h3>
-            <div style="font-size: 48px; margin: 20px 0;">${emoji}</div>
-            <div style="font-size: 36px; color: ${percentage >= 70 ? 'green' : 'orange'};">
-                ${score}/${selectedQuestions.length} (${percentage}%)
-            </div>
-            <p style="font-size: 24px; margin: 20px 0;">${message}</p>
-            <h4>Review:</h4>
-        `;
-
-        results.forEach((r, i) => {
-            const reviewDiv = document.createElement('p');
-            reviewDiv.innerHTML = `
-                <strong>${i + 1}.</strong> ${r.question}<br>
-                <span style="color: green;">Answer: ${r.correctAnswer}</span><br>
-                <span>${r.result}</span>
-            `;
-            quizContainer.appendChild(reviewDiv);
-        });
-
-        const closeButton = document.createElement('button');
-        closeButton.textContent = 'Close';
-        closeButton.className = 'kizuna-quiz-close';
-        closeButton.addEventListener('click', () => quizContainer.remove());
-        quizContainer.appendChild(closeButton);
-    }
-
-    askQuestion(0);
-} = document.createElement('div');
+        const menu = document.createElement('div');
         menu.id = 'kizuna-menu';
 
         // Always add scroll buttons
@@ -398,7 +395,7 @@
         menu.appendChild(startScrollBtn);
         menu.appendChild(stopScrollBtn);
 
-        // Add quiz buttons if enabled (don't check for table existence)
+        // Add quiz buttons if enabled
         if (CONFIG.enableMdQuizz) {
             console.log('Quiz feature enabled - adding quiz buttons');
             
@@ -469,25 +466,13 @@
             document.addEventListener('DOMContentLoaded', () => {
                 loadStyles();
                 setTimeout(createMenu, 100);
-//                if (CONFIG.enablePrivacy) {
-//                    setTimeout(showPrivacyPopup, 1500);
-//                }
             });
         } else {
             loadStyles();
             setTimeout(createMenu, 100);
-//            if (CONFIG.enablePrivacy) {
-//                setTimeout(showPrivacyPopup, 1500);
-//            }
         }
     }
 
     // Start initialization
     init();
 })();
-
-
-
-
-
-
