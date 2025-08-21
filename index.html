@@ -129,6 +129,12 @@
                 <p>Kizuna is a powerful injection service that adds interactive features to any website.</p>
             </section>
 
+            <section class="demo">
+                <h3>🎯 Live Demo</h3>
+                <p>The Kizuna menu is available on this page! Look for the hamburger menu (☰) in the bottom-right corner to try out the features.</p>
+                <p><strong>Note:</strong> Some features like the quiz system require specific table structures to work properly.</p>
+            </section>
+
             <section class="features">
                 <h3>Available Features</h3>
                 <div class="feature-grid">
@@ -183,4 +189,36 @@
                     </div>
                     <div class="param">
                         <strong>enableprivacy:</strong> "yes" or "no" - Enable GDPR privacy popup
+                    </div>
+                </div>
+            </section>
 
+            <section class="demo">
+                <h3>🔧 For Testing</h3>
+                <p>To test the quiz functionality, create a table with the following structure:</p>
+                <div class="code-block">
+                    <code>
+                        &lt;table&gt;<br>
+                        &nbsp;&nbsp;&lt;tbody&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;tr&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;td&gt;Question&lt;/td&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;td&gt;Answer 1&lt;/td&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;td&gt;Answer 2&lt;/td&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;td&gt;Answer 3&lt;/td&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;/tr&gt;<br>
+                        &nbsp;&nbsp;&lt;/tbody&gt;<br>
+                        &lt;/table&gt;
+                    </code>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy;  Kizuna Web Service. MIT Licensed.</p>
+        </footer>
+    </div>
+
+    <!-- Load Kizuna on this demo page -->
+    <script defer src="/main.js?website-url=https://kizuna.kahiether.com&personalinfostored=no&enablemdquizz=yes&enablejssandbox=yes&enableprivacy=yes"></script>
+</body>
+</html>
