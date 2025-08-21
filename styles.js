@@ -1,5 +1,7 @@
 window.applyKizunaStyles = function() {
     const styles = `
+        /* Only style Kizuna-specific elements - no global overrides */
+        
         /* Kizuna Menu Styles */
         #kizuna-burger {
             position: fixed;
@@ -19,6 +21,7 @@ window.applyKizunaStyles = function() {
             border-radius: 50%;
             transition: all 0.3s ease;
             user-select: none;
+            font-family: Arial, sans-serif;
         }
 
         #kizuna-burger:hover {
@@ -36,15 +39,16 @@ window.applyKizunaStyles = function() {
             padding: 0;
             display: none;
             z-index: 10000;
-            animation: slideUp 0.3s ease;
+            animation: kizuna-slideUp 0.3s ease;
+            font-family: Arial, sans-serif;
         }
 
-        @keyframes slideUp {
+        @keyframes kizuna-slideUp {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .menu-button {
+        .kizuna-menu-button {
             display: block;
             margin-bottom: 10px;
             background-color: #007bff;
@@ -56,15 +60,16 @@ window.applyKizunaStyles = function() {
             transition: all 0.3s ease;
             font-size: 14px;
             min-width: 120px;
+            font-family: Arial, sans-serif;
         }
 
-        .menu-button:hover {
+        .kizuna-menu-button:hover {
             background-color: #0056b3;
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0,123,255,0.3);
         }
 
-        .menu-button:active {
+        .kizuna-menu-button:active {
             transform: scale(0.95);
         }
 
@@ -85,15 +90,33 @@ window.applyKizunaStyles = function() {
             overflow-y: auto;
             text-align: center;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            animation: zoomIn 0.3s ease;
+            animation: kizuna-zoomIn 0.3s ease;
+            font-family: Arial, sans-serif;
         }
 
-        @keyframes zoomIn {
+        @keyframes kizuna-zoomIn {
             from { opacity: 0; transform: translateX(-50%) scale(0.8); }
             to { opacity: 1; transform: translateX(-50%) scale(1); }
         }
 
-        .quiz-option {
+        #kizuna-quiz-container h3 {
+            color: #007bff;
+            margin: 0 0 15px 0;
+            font-size: 1.5em;
+        }
+
+        #kizuna-quiz-container h4 {
+            color: #333;
+            margin: 0 0 20px 0;
+            font-size: 1.2em;
+        }
+
+        #kizuna-quiz-container p {
+            margin: 15px 0;
+            color: #333;
+        }
+
+        .kizuna-quiz-option {
             margin: 10px;
             padding: 10px 20px;
             border: 2px solid #007bff;
@@ -103,15 +126,16 @@ window.applyKizunaStyles = function() {
             color: #007bff;
             transition: all 0.3s ease;
             font-size: 16px;
+            font-family: Arial, sans-serif;
         }
 
-        .quiz-option:hover {
+        .kizuna-quiz-option:hover {
             background-color: #007bff;
             color: white;
             transform: translateY(-2px);
         }
 
-        .quiz-close {
+        .kizuna-quiz-close {
             margin-top: 20px;
             padding: 10px 20px;
             border: 2px solid #007bff;
@@ -121,21 +145,23 @@ window.applyKizunaStyles = function() {
             color: white;
             font-size: 16px;
             transition: all 0.3s ease;
+            font-family: Arial, sans-serif;
         }
 
-        .quiz-close:hover {
+        .kizuna-quiz-close:hover {
             background-color: #0056b3;
         }
 
-        .timer-display {
+        .kizuna-timer-display {
             margin-top: 10px;
             font-size: 18px;
             color: #dc3545;
             font-weight: bold;
-            animation: pulse 1s infinite;
+            animation: kizuna-pulse 1s infinite;
+            font-family: Arial, sans-serif;
         }
 
-        @keyframes pulse {
+        @keyframes kizuna-pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.7; }
         }
@@ -152,45 +178,47 @@ window.applyKizunaStyles = function() {
             display: flex;
             align-items: center;
             justify-content: center;
-            animation: fadeIn 0.3s ease;
+            animation: kizuna-fadeIn 0.3s ease;
+            font-family: Arial, sans-serif;
         }
 
-        @keyframes fadeIn {
+        @keyframes kizuna-fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
         }
 
-        .privacy-content {
+        .kizuna-privacy-content {
             background-color: white;
             padding: 30px;
             border-radius: 10px;
             max-width: 500px;
             text-align: center;
             box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-            animation: slideDown 0.3s ease;
+            animation: kizuna-slideDown 0.3s ease;
         }
 
-        @keyframes slideDown {
+        @keyframes kizuna-slideDown {
             from { transform: translateY(-50px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
 
-        .privacy-content h3 {
+        .kizuna-privacy-content h3 {
             color: #007bff;
             margin-bottom: 20px;
+            font-size: 1.5em;
         }
 
-        .privacy-content p {
+        .kizuna-privacy-content p {
             margin: 15px 0;
             line-height: 1.6;
             color: #333;
         }
 
-        .privacy-buttons {
+        .kizuna-privacy-buttons {
             margin-top: 25px;
         }
 
-        .privacy-buttons button {
+        .kizuna-privacy-buttons button {
             margin: 0 10px;
             padding: 12px 24px;
             border: none;
@@ -198,23 +226,24 @@ window.applyKizunaStyles = function() {
             cursor: pointer;
             font-size: 16px;
             transition: all 0.3s ease;
+            font-family: Arial, sans-serif;
         }
 
-        .privacy-buttons button:first-child {
+        .kizuna-privacy-buttons button:first-child {
             background-color: #28a745;
             color: white;
         }
 
-        .privacy-buttons button:first-child:hover {
+        .kizuna-privacy-buttons button:first-child:hover {
             background-color: #218838;
         }
 
-        .privacy-buttons button:last-child {
+        .kizuna-privacy-buttons button:last-child {
             background-color: #dc3545;
             color: white;
         }
 
-        .privacy-buttons button:last-child:hover {
+        .kizuna-privacy-buttons button:last-child:hover {
             background-color: #c82333;
         }
 
@@ -234,16 +263,18 @@ window.applyKizunaStyles = function() {
             max-height: 90vh;
             overflow-y: auto;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            animation: zoomIn 0.3s ease;
+            animation: kizuna-zoomIn 0.3s ease;
+            font-family: Arial, sans-serif;
         }
 
-        .sandbox-content h3 {
+        .kizuna-sandbox-content h3 {
             color: #007bff;
             margin-bottom: 15px;
             text-align: center;
+            font-size: 1.5em;
         }
 
-        .sandbox-content textarea {
+        .kizuna-sandbox-content textarea {
             width: 100%;
             padding: 15px;
             border: 2px solid #ddd;
@@ -252,19 +283,20 @@ window.applyKizunaStyles = function() {
             font-size: 14px;
             resize: vertical;
             min-height: 200px;
+            box-sizing: border-box;
         }
 
-        .sandbox-content textarea:focus {
+        .kizuna-sandbox-content textarea:focus {
             border-color: #007bff;
             outline: none;
         }
 
-        .sandbox-buttons {
+        .kizuna-sandbox-buttons {
             margin: 15px 0;
             text-align: center;
         }
 
-        .sandbox-buttons button {
+        .kizuna-sandbox-buttons button {
             margin: 0 10px;
             padding: 10px 20px;
             border: 2px solid #007bff;
@@ -273,34 +305,35 @@ window.applyKizunaStyles = function() {
             background-color: white;
             color: #007bff;
             transition: all 0.3s ease;
+            font-family: Arial, sans-serif;
         }
 
-        .sandbox-buttons button:hover {
+        .kizuna-sandbox-buttons button:hover {
             background-color: #007bff;
             color: white;
         }
 
-        .sandbox-buttons button:first-child {
+        .kizuna-sandbox-buttons button:first-child {
             background-color: #28a745;
             border-color: #28a745;
             color: white;
         }
 
-        .sandbox-buttons button:first-child:hover {
+        .kizuna-sandbox-buttons button:first-child:hover {
             background-color: #218838;
         }
 
-        .sandbox-buttons button:last-child {
+        .kizuna-sandbox-buttons button:last-child {
             background-color: #dc3545;
             border-color: #dc3545;
             color: white;
         }
 
-        .sandbox-buttons button:last-child:hover {
+        .kizuna-sandbox-buttons button:last-child:hover {
             background-color: #c82333;
         }
 
-        .sandbox-output {
+        .kizuna-sandbox-output {
             margin-top: 15px;
             padding: 15px;
             background-color: #f8f9fa;
@@ -320,13 +353,13 @@ window.applyKizunaStyles = function() {
                 padding: 15px;
             }
 
-            .privacy-content {
+            .kizuna-privacy-content {
                 margin: 20px;
                 padding: 20px;
             }
 
-            .quiz-option,
-            .menu-button {
+            .kizuna-quiz-option,
+            .kizuna-menu-button {
                 font-size: 14px;
                 padding: 8px 16px;
             }
@@ -337,6 +370,9 @@ window.applyKizunaStyles = function() {
                 font-size: 20px;
             }
         }
+
+        /* REMOVED: All global styles that could conflict with host website */
+        /* NO MORE: body, .container, .hero, .features, header, footer, h3, table styles */
     `;
 
     // Create and inject style element
@@ -352,4 +388,3 @@ window.applyKizunaStyles = function() {
     
     document.head.appendChild(styleElement);
 };
-
