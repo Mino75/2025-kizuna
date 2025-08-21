@@ -227,6 +227,18 @@ window.applyKizunaStyles = function() {
             font-size: 16px;
             transition: all 0.3s ease;
             font-family: Arial, sans-serif;
+            /*  hauteur + overflow */
+  max-height: min(80vh, 90dvh);     /* vh + dvh pour mobiles */
+  overflow: auto;                   /* active le scroll interne */
+
+  /* overflow flex/grid */
+  min-height: 0;
+
+  /* Smooth scroll iOS */
+  -webkit-overflow-scrolling: touch;
+
+  /* scroll intern (mobile) */
+  overscroll-behavior: contain;
         }
 
         .kizuna-privacy-buttons button:first-child {
@@ -388,3 +400,4 @@ window.applyKizunaStyles = function() {
     
     document.head.appendChild(styleElement);
 };
+
