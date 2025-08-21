@@ -10,11 +10,15 @@
         enablePrivacy: '{{ENABLE_PRIVACY}}' === 'yes'
     };
 
+    // Debug configuration (remove in production)
+    console.log('Kizuna Config:', CONFIG);
+
     // Load styles dynamically
     function loadStyles() {
         const script = document.createElement('script');
         script.src = 'https://kizuna.kahiether.com/styles.js';
         script.onload = () => window.applyKizunaStyles && window.applyKizunaStyles();
+        script.onerror = () => console.error('Failed to load Kizuna styles');
         document.head.appendChild(script);
     }
 
@@ -69,8 +73,9 @@
         const output = sandbox.querySelector('.sandbox-output');
         
         try {
-            const result = eval(textarea.value);
-            output.innerHTML = `<strong>Result:</strong> ${result}`;
+            // Create a safe execution context
+            const result = new Function(textarea.value)();
+            output.innerHTML = `<strong>Result:</strong> ${result !== undefined ? result : 'Code executed successfully'}`;
             output.style.color = 'green';
         } catch (error) {
             output.innerHTML = `<strong>Error:</strong> ${error.message}`;
@@ -112,20 +117,33 @@
     }
 
     function startQuiz(isAdvanced) {
-        if (!CONFIG.enableMdQuizz) return;
+        if (!CONFIG.enableMdQuizz) {
+            console.log('Quiz is disabled');
+            return;
+        }
         
         const rows = Array.from(document.querySelectorAll("table tbody tr"));
-        const totalQuestions = 20;
+        if (rows.length === 0) {
+            alert('No table data found on this page. Quiz requires a table structure to work.');
+            return;
+        }
+
+        const totalQuestions = Math.min(20, rows.length);
         let selectedQuestions = [];
 
-        while (selectedQuestions.length < totalQuestions) {
+        // Select random questions
+        let attempts = 0;
+        while (selectedQuestions.length < totalQuestions && attempts < rows.length * 2) {
+            attempts++;
             const randomRowIndex = Math.floor(Math.random() * rows.length);
             const row = rows[randomRowIndex];
             const cells = row.querySelectorAll("td");
 
-            if (!cells.length) continue;
+            if (!cells.length || cells.length < 2) continue;
 
-            const validColumns = [1, 2, 3].filter(index => isValidCell(cells[index]?.textContent));
+            const validColumns = [1, 2, 3].filter(index => 
+                cells[index] && isValidCell(cells[index].textContent)
+            );
             if (!validColumns.length) continue;
 
             const answerColumn = validColumns[Math.floor(Math.random() * validColumns.length)];
@@ -133,12 +151,21 @@
             const correctAnswer = cells[answerColumn]?.textContent.trim();
 
             if (isValidCell(questionText) && isValidCell(correctAnswer)) {
-                selectedQuestions.push({
-                    question: questionText,
-                    correctAnswer,
-                    column: answerColumn
-                });
+                // Check if question already exists
+                const exists = selectedQuestions.some(q => q.question === questionText);
+                if (!exists) {
+                    selectedQuestions.push({
+                        question: questionText,
+                        correctAnswer,
+                        column: answerColumn
+                    });
+                }
             }
+        }
+
+        if (selectedQuestions.length === 0) {
+            alert('No valid quiz questions found in the table data.');
+            return;
         }
 
         let score = 0;
@@ -174,7 +201,7 @@
 
             const options = [cleanAnswer, ...incorrectAnswers].sort(() => 0.5 - Math.random());
 
-            quizContainer.innerHTML = `<h3>What is the translation of "${question}"?</h3>`;
+            quizContainer.innerHTML = `<h3>Question ${index + 1}/${selectedQuestions.length}</h3><h4>What is the translation of "${question}"?</h4>`;
 
             if (isAdvanced) {
                 const timerDisplay = document.createElement('div');
@@ -217,18 +244,20 @@
 
         function showRecap() {
             quizContainer.innerHTML = "<h3>Quiz Recap</h3>";
-            results.forEach(r => {
-                quizContainer.innerHTML += `<p>${r.question} - <strong>${r.correctAnswer}</strong> - ${r.result}</p>`;
+            results.forEach((r, i) => {
+                quizContainer.innerHTML += `<p><strong>${i + 1}.</strong> ${r.question} - <strong>${r.correctAnswer}</strong> - ${r.result}</p>`;
             });
 
-            if (score >= 18) {
-                quizContainer.innerHTML += `<div style='font-size: 48px; margin: 20px;'> ${score} / ${totalQuestions}   🎉🎊 Excellent! 🎊🎉</div>`;
-            } else if (score >= 13) {
-                quizContainer.innerHTML += `<div style='font-size: 36px; margin: 20px;'> ${score} / ${totalQuestions} 🌟 Great Job! 🌟</div>`;
-            } else if (score >= 10) {
-                quizContainer.innerHTML += `<div style='font-size: 24px; margin: 20px;'> ${score} / ${totalQuestions}👍 Good Effort! 👍</div>`;
-            } else if (score > 0) {
-                quizContainer.innerHTML += `<div style='font-size: 24px; margin: 20px;'> ${score} You need more review </div>`;
+            const percentage = Math.round((score / selectedQuestions.length) * 100);
+            
+            if (percentage >= 90) {
+                quizContainer.innerHTML += `<div style='font-size: 48px; margin: 20px; color: gold;'>${score}/${selectedQuestions.length} (${percentage}%) 🎉🎊 Excellent! 🎊🎉</div>`;
+            } else if (percentage >= 70) {
+                quizContainer.innerHTML += `<div style='font-size: 36px; margin: 20px; color: green;'>${score}/${selectedQuestions.length} (${percentage}%) 🌟 Great Job! 🌟</div>`;
+            } else if (percentage >= 50) {
+                quizContainer.innerHTML += `<div style='font-size: 24px; margin: 20px; color: orange;'>${score}/${selectedQuestions.length} (${percentage}%) 👍 Good Effort! 👍</div>`;
+            } else {
+                quizContainer.innerHTML += `<div style='font-size: 24px; margin: 20px; color: red;'>${score}/${selectedQuestions.length} (${percentage}%) - You need more review</div>`;
             }
 
             const closeButton = document.createElement('button');
@@ -258,20 +287,25 @@
             return button;
         }
 
+        // Always add scroll buttons
         const startScrollButton = createButton("Start Scroll", () => zoomAwareScroll(50));
-        const stopScrollButton = createButton("Stop Scroll", () => window.stopScroll());
+        const stopScrollButton = createButton("Stop Scroll", () => window.stopScroll && window.stopScroll());
         
         menu.appendChild(startScrollButton);
         menu.appendChild(stopScrollButton);
 
+        // Add quiz buttons if enabled
         if (CONFIG.enableMdQuizz) {
+            console.log('Adding quiz buttons');
             const beginnerQuizButton = createButton("Beginner Quiz", () => startQuiz(false));
             const advancedQuizButton = createButton("Advanced Quiz", () => startQuiz(true));
             menu.appendChild(beginnerQuizButton);
             menu.appendChild(advancedQuizButton);
         }
 
+        // Add sandbox button if enabled
         if (CONFIG.enableJsSandbox) {
+            console.log('Adding sandbox button');
             const sandboxButton = createButton("JS Sandbox", () => {
                 const sandbox = createJsSandbox();
                 if (sandbox) document.body.appendChild(sandbox);
@@ -279,13 +313,15 @@
             menu.appendChild(sandboxButton);
         }
 
+        // Add privacy button if enabled
         if (CONFIG.enablePrivacy) {
+            console.log('Adding privacy button');
             const privacyButton = createButton("Privacy Info", showPrivacyPopup);
             menu.appendChild(privacyButton);
         }
 
         burger.addEventListener('click', () => {
-            menu.style.display = menu.style.display === "none" ? "block" : "none";
+            menu.style.display = menu.style.display === "none" || menu.style.display === "" ? "block" : "none";
         });
 
         document.body.appendChild(burger);
@@ -294,19 +330,21 @@
 
     // Initialize Kizuna
     function init() {
+        console.log('Initializing Kizuna...');
+        
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => {
                 loadStyles();
-                createMenu();
+                setTimeout(createMenu, 100); // Small delay to ensure styles are loaded
                 if (CONFIG.enablePrivacy) {
-                    setTimeout(showPrivacyPopup, 1000);
+                    setTimeout(showPrivacyPopup, 1500);
                 }
             });
         } else {
             loadStyles();
-            createMenu();
+            setTimeout(createMenu, 100);
             if (CONFIG.enablePrivacy) {
-                setTimeout(showPrivacyPopup, 1000);
+                setTimeout(showPrivacyPopup, 1500);
             }
         }
     }
