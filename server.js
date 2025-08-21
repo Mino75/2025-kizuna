@@ -19,26 +19,9 @@ app.use(express.static(__dirname, {
   lastModified: false
 }));
 
-// Helper function to extract parameters from referer or query
+// Helper function to extract parameters from URL query string
 function extractParameters(req) {
-  let params = {};
-  
-  // First try query parameters
-  if (Object.keys(req.query).length > 0) {
-    params = { ...req.query };
-  }
-  
-  // If no query params, try to extract from referer header
-  const referer = req.get('Referer');
-  if (referer && Object.keys(params).length === 0) {
-    try {
-      const url = new URL(referer);
-      // Extract from script attributes in the calling page would require parsing
-      // For now, we'll rely on query parameters
-    } catch (e) {
-      // Invalid referer URL
-    }
-  }
+  const params = req.query;
   
   return {
     websiteUrl: params['website-url'] || params.websiteUrl || 'unknown',
@@ -56,7 +39,7 @@ app.get('/main.js', (req, res) => {
   res.setHeader('Access-Control-Allow-Methods', 'GET');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   
-  // Extract parameters
+  // Extract parameters from query string
   const params = extractParameters(req);
   
   // Log parameters for debugging
