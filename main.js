@@ -10,7 +10,6 @@
         enablePrivacy: '{{ENABLE_PRIVACY}}' === 'yes'
     };
 
-    // Debug configuration (remove in production)
     console.log('Kizuna Config:', CONFIG);
 
     // Load styles dynamically
@@ -29,14 +28,14 @@
         const popup = document.createElement('div');
         popup.id = 'kizuna-privacy-popup';
         popup.innerHTML = `
-            <div class="privacy-content">
+            <div class="kizuna-privacy-content">
                 <h3>Privacy & GDPR Compliance</h3>
                 <p>This website (${CONFIG.websiteUrl}) uses the Kizuna feature enhancement service.</p>
                 <p><strong>Personal Information Storage:</strong> ${CONFIG.personalInfoStored === 'yes' ? 'This website stores personal information' : 'This website does not store personal information'}.</p>
                 <p>By continuing to use this website, you consent to our data processing practices in accordance with GDPR regulations. We are committed to protecting your privacy and ensuring transparent data handling.</p>
                 <p>For more information about how your data is processed, please contact the website administrator at ${CONFIG.websiteUrl}.</p>
                 <p>You have the right to access, modify, or delete your personal data at any time.</p>
-                <div class="privacy-buttons">
+                <div class="kizuna-privacy-buttons">
                     <button onclick="this.closest('#kizuna-privacy-popup').remove()">Accept</button>
                     <button onclick="window.location.href='about:blank'">Decline</button>
                 </div>
@@ -52,15 +51,15 @@
         const sandbox = document.createElement('div');
         sandbox.id = 'kizuna-js-sandbox';
         sandbox.innerHTML = `
-            <div class="sandbox-content">
+            <div class="kizuna-sandbox-content">
                 <h3>JavaScript Sandbox</h3>
                 <textarea placeholder="Paste your JavaScript code here..." rows="10"></textarea>
-                <div class="sandbox-buttons">
+                <div class="kizuna-sandbox-buttons">
                     <button onclick="executeScript(this)">Execute</button>
                     <button onclick="clearSandbox(this)">Clear</button>
                     <button onclick="closeSandbox(this)">Close</button>
                 </div>
-                <div class="sandbox-output"></div>
+                <div class="kizuna-sandbox-output"></div>
             </div>
         `;
         return sandbox;
@@ -70,10 +69,9 @@
     window.executeScript = function(btn) {
         const sandbox = btn.closest('#kizuna-js-sandbox');
         const textarea = sandbox.querySelector('textarea');
-        const output = sandbox.querySelector('.sandbox-output');
+        const output = sandbox.querySelector('.kizuna-sandbox-output');
         
         try {
-            // Create a safe execution context
             const result = new Function(textarea.value)();
             output.innerHTML = `<strong>Result:</strong> ${result !== undefined ? result : 'Code executed successfully'}`;
             output.style.color = 'green';
@@ -86,7 +84,7 @@
     window.clearSandbox = function(btn) {
         const sandbox = btn.closest('#kizuna-js-sandbox');
         sandbox.querySelector('textarea').value = '';
-        sandbox.querySelector('.sandbox-output').innerHTML = '';
+        sandbox.querySelector('.kizuna-sandbox-output').innerHTML = '';
     };
 
     window.closeSandbox = function(btn) {
@@ -118,7 +116,7 @@
 
     function startQuiz(isAdvanced) {
         if (!CONFIG.enableMdQuizz) {
-            console.log('Quiz is disabled');
+            alert('Quiz is disabled');
             return;
         }
         
@@ -151,7 +149,6 @@
             const correctAnswer = cells[answerColumn]?.textContent.trim();
 
             if (isValidCell(questionText) && isValidCell(correctAnswer)) {
-                // Check if question already exists
                 const exists = selectedQuestions.some(q => q.question === questionText);
                 if (!exists) {
                     selectedQuestions.push({
@@ -205,7 +202,7 @@
 
             if (isAdvanced) {
                 const timerDisplay = document.createElement('div');
-                timerDisplay.className = 'timer-display';
+                timerDisplay.className = 'kizuna-timer-display';
                 quizContainer.appendChild(timerDisplay);
 
                 let timeLeft = 21;
@@ -223,7 +220,7 @@
             options.forEach(option => {
                 const optionButton = document.createElement('button');
                 optionButton.textContent = option;
-                optionButton.className = 'quiz-option';
+                optionButton.className = 'kizuna-quiz-option';
                 optionButton.addEventListener('click', () => {
                     clearTimeout(timer);
                     clearInterval(timer);
@@ -262,7 +259,7 @@
 
             const closeButton = document.createElement('button');
             closeButton.textContent = "Close";
-            closeButton.className = 'quiz-close';
+            closeButton.className = 'kizuna-quiz-close';
             closeButton.addEventListener('click', () => quizContainer.remove());
             quizContainer.appendChild(closeButton);
         }
@@ -282,7 +279,7 @@
         function createButton(text, clickHandler) {
             const button = document.createElement('button');
             button.textContent = text;
-            button.className = 'menu-button';
+            button.className = 'kizuna-menu-button';
             button.addEventListener('click', clickHandler);
             return button;
         }
@@ -335,7 +332,7 @@
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => {
                 loadStyles();
-                setTimeout(createMenu, 100); // Small delay to ensure styles are loaded
+                setTimeout(createMenu, 100);
                 if (CONFIG.enablePrivacy) {
                     setTimeout(showPrivacyPopup, 1500);
                 }
