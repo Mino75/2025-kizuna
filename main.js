@@ -36,7 +36,7 @@
         const popup = document.createElement('div');
         popup.id = 'kizuna-privacy-popup';
         popup.innerHTML = `
-            <div class="privacy-content">
+            <div class="kizuna-privacy-content">
                 <h3>Privacy & GDPR Compliance</h3>
                 <p>Your privacy is important to us. This application is designed to comply with the General Data Protection Regulation (GDPR) and to ensure that your personal data remains under your control at all times.</p>
         
@@ -50,7 +50,7 @@
         
                 <p><strong>Consent:</strong> By continuing to use this website, you consent to the limited, anonymized analytics described above and to the local processing of data required for the functionality of this application.</p>
         
-                <div class="privacy-buttons">
+                <div class="kizuna-privacy-buttons">
                     <button onclick="this.closest('#privacy-popup').remove()">Accept</button>
                     <button onclick="window.location.href='about:blank'">Decline</button>
                 </div>
@@ -479,5 +479,6 @@
     // Start initialization
     init();
 })();
+
 
 
