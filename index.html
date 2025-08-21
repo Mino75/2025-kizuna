@@ -1,1 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kizuna - Website Enhancement Service</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 2px solid #007bff;
+            margin-bottom: 30px;
+        }
+        header h1 {
+            color: #007bff;
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        header p {
+            color: #666;
+            margin: 10px 0 0 0;
+        }
+        .hero {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .hero h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .features {
+            margin-bottom: 40px;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .feature {
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+        .feature h4 {
+            color: #007bff;
+            margin: 0 0 10px 0;
+        }
+        .code-block {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        .code-block code {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #333;
+        }
+        .param-list {
+            margin-top: 20px;
+        }
+        .param {
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            border-left: 3px solid #007bff;
+        }
+        .demo {
+            background-color: #e7f3ff;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 30px 0;
+        }
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            border-top: 1px solid #ddd;
+            margin-top: 40px;
+            color: #666;
+        }
+        h3 {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            header h1 {
+                font-size: 2rem;
+            }
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Kizuna</h1>
+            <p>Website Enhancement Injection Service</p>
+        </header>
+
+        <main>
+            <section class="hero">
+                <h2>Enhance Your Website with Kizuna</h2>
+                <p>Kizuna is a powerful injection service that adds interactive features to any website.</p>
+            </section>
+
+            <section class="features">
+                <h3>Available Features</h3>
+                <div class="feature-grid">
+                    <div class="feature">
+                        <h4>Auto Scroll</h4>
+                        <p>Intelligent scrolling functionality with zoom awareness</p>
+                    </div>
+                    <div class="feature">
+                        <h4>Interactive Quizzes</h4>
+                        <p>Markdown table-based quiz system with beginner and advanced modes</p>
+                    </div>
+                    <div class="feature">
+                        <h4>JavaScript Sandbox</h4>
+                        <p>Safe code execution environment for testing and validation</p>
+                    </div>
+                    <div class="feature">
+                        <h4>Privacy Compliance</h4>
+                        <p>GDPR-compliant privacy popups and information management</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="usage">
+                <h3>How to Use</h3>
+                <p>Add Kizuna to your website by including this script tag:</p>
+                <div class="code-block">
+                    <code>
+                        &lt;script defer src="https://kizuna.kahiether.com/main.js" 
+                        website-url="https://yoursite.com"
+                        personalinfostored="no"
+                        enablemdquizz="yes"
+                        enablejssandbox="no"
+                        enableprivacy="yes"&gt;&lt;/script&gt;
+                    </code>
+                </div>
+            </section>
+
+            <section class="parameters">
+                <h3>Configuration Parameters</h3>
+                <div class="param-list">
+                    <div class="param">
+                        <strong>website-url:</strong> Your website URL (for privacy notices)
+                    </div>
+                    <div class="param">
+                        <strong>personalinfostored:</strong> "yes" or "no" - Whether your site stores personal info
+                    </div>
+                    <div class="param">
+                        <strong>enablemdquizz:</strong> "yes" or "no" - Enable quiz functionality
+                    </div>
+                    <div class="param">
+                        <strong>enablejssandbox:</strong> "yes" or "no" - Enable JavaScript sandbox
+                    </div>
+                    <div class="param">
+                        <strong>enableprivacy:</strong> "yes" or "no" - Enable GDPR privacy popup
 
