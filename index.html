@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script defer src="https://analytics.kahiether.com/script.js" data-website-id="106b9899-134b-42a8-a949-a0a934031b9b"></script>
-    <title>Kizuna - Website Enhancement Service</title>
+    <title> 絆 Kizuna Service</title>
     <style>
         /* Basic page styles - separate from Kizuna styles */
         * {
@@ -92,6 +92,10 @@
             border-left: 4px solid #667eea;
         }
         
+        .feature.danger {
+            border-left-color: #dc3545;
+        }
+        
         .code-block {
             background: #2d2d2d;
             color: #f8f8f2;
@@ -152,6 +156,17 @@
             color: #856404;
         }
         
+        .warning {
+            background: #f8d7da;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #dc3545;
+        }
+        
+        .warning h3 {
+            color: #721c24;
+        }
+        
         footer {
             text-align: center;
             padding: 30px 0;
@@ -177,20 +192,20 @@
 <body>
     <div class="container">
         <header>
-            <h1>🔗 Kizuna</h1>
-            <p>Website Enhancement Injection Service</p>
+            <h1>🔗 Kizuna 絆 </h1>
+            <p>Website  Service Injection </p>
         </header>
 
         <main>
             <section class="hero">
                 <h2>Enhance Your Website with Kizuna</h2>
-                <p>Kizuna is a powerful injection service that adds interactive features to any website without modifying your existing code.</p>
+                <p>Kizuna is a powerful service that adds interactive features to any website without modifying your existing code.</p>
             </section>
 
             <section class="demo">
                 <h3>🎯 Live Demo Active!</h3>
                 <p>The Kizuna menu is available on this page! Look for the <strong>hamburger menu (☰)</strong> in the bottom-right corner to try out all features.</p>
-                <p><strong>Features enabled on this page:</strong> Auto-scroll, Quiz System, JavaScript Sandbox, and Privacy Popup</p>
+                <p><strong>Features enabled on this page:</strong> Auto-scroll, Quiz System, JavaScript Sandbox, Privacy Popup, and Clear All Data</p>
             </section>
 
             <section class="features">
@@ -211,6 +226,10 @@
                     <div class="feature">
                         <h4>🔒 Privacy Compliance</h4>
                         <p>GDPR-compliant privacy popups and information management</p>
+                    </div>
+                    <div class="feature danger">
+                        <h4>🗑️ Clear All Data</h4>
+                        <p><strong>NEW:</strong> Complete local data cleanup - IndexedDB, cache, service workers, localStorage, sessionStorage, and cookies with confirmation popup</p>
                     </div>
                 </div>
             </section>
@@ -242,6 +261,21 @@
                         <strong>enableprivacy:</strong> "yes" or "no" - Enable GDPR privacy popup on page load
                     </div>
                 </div>
+            </section>
+
+            <section class="warning">
+                <h3>⚠️ Clear All Data Feature</h3>
+                <p><strong>Important:</strong> The "Clear All Data" button is always available in the Kizuna menu, regardless of configuration parameters. This feature provides users with complete control over their local data.</p>
+                <p><strong>What it clears:</strong></p>
+                <ul>
+                    <li>🗄️ <strong>localStorage:</strong> All key-value pairs stored locally</li>
+                    <li>📝 <strong>sessionStorage:</strong> All session-specific data</li>
+                    <li>🗃️ <strong>IndexedDB:</strong> All databases and their contents</li>
+                    <li>📄 <strong>Cache API:</strong> All cached resources</li>
+                    <li>🔧 <strong>Service Workers:</strong> Unregisters all service workers</li>
+                    <li>🍪 <strong>Cookies:</strong> Same-origin cookies (best effort)</li>
+                </ul>
+                <p><strong>Safety:</strong> Requires user confirmation with a detailed warning popup before proceeding. The page automatically reloads after data clearing to ensure a clean state.</p>
             </section>
 
             <!-- Sample table for testing quiz functionality -->
@@ -399,7 +433,4 @@
     </div>
 
     <!-- Load Kizuna on this demo page with query parameters -->
-    <script defer src="/main.js?website-url=https://kizuna.kahiether.com&personalinfostored=no&enablemdquizz=yes&enablejssandbox=yes&enableprivacy=yes"></script>
-</body>
-</html>
-
+    <script defer src="/main.js?website-url=https://kizuna.kahiether.com&personalinfostored=no&enablemdquizz=yes&enablejssandbox=yes
