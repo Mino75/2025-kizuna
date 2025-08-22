@@ -29,6 +29,164 @@
         document.head.appendChild(script);
     }
 
+    // Clear All Data functionality
+    async function clearAllData() {
+        try {
+            // Clear localStorage
+            if (typeof(Storage) !== "undefined" && localStorage) {
+                localStorage.clear();
+                console.log('LocalStorage cleared');
+            }
+
+            // Clear sessionStorage
+            if (typeof(Storage) !== "undefined" && sessionStorage) {
+                sessionStorage.clear();
+                console.log('SessionStorage cleared');
+            }
+
+            // Clear IndexedDB
+            if ('indexedDB' in window) {
+                try {
+                    const databases = await indexedDB.databases();
+                    await Promise.all(
+                        databases.map(db => {
+                            return new Promise((resolve, reject) => {
+                                const deleteReq = indexedDB.deleteDatabase(db.name);
+                                deleteReq.onsuccess = () => resolve();
+                                deleteReq.onerror = () => reject(deleteReq.error);
+                            });
+                        })
+                    );
+                    console.log('IndexedDB cleared');
+                } catch (error) {
+                    console.warn('Could not clear IndexedDB:', error);
+                }
+            }
+
+            // Clear Cache API
+            if ('caches' in window) {
+                try {
+                    const cacheNames = await caches.keys();
+                    await Promise.all(
+                        cacheNames.map(cacheName => caches.delete(cacheName))
+                    );
+                    console.log('Cache API cleared');
+                } catch (error) {
+                    console.warn('Could not clear Cache API:', error);
+                }
+            }
+
+            // Unregister Service Workers
+            if ('serviceWorker' in navigator) {
+                try {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    await Promise.all(
+                        registrations.map(registration => registration.unregister())
+                    );
+                    console.log('Service Workers unregistered');
+                } catch (error) {
+                    console.warn('Could not unregister Service Workers:', error);
+                }
+            }
+
+            // Clear cookies (best effort - same origin only)
+            try {
+                document.cookie.split(";").forEach(cookie => {
+                    const eqPos = cookie.indexOf("=");
+                    const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+                    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+                    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=" + window.location.hostname;
+                    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=." + window.location.hostname;
+                });
+                console.log('Cookies cleared');
+            } catch (error) {
+                console.warn('Could not clear cookies:', error);
+            }
+
+            console.log('All data clearing completed');
+            return true;
+        } catch (error) {
+            console.error('Error during data clearing:', error);
+            return false;
+        }
+    }
+
+    // Show clear data confirmation popup
+    function showClearDataConfirmation() {
+        const popup = document.createElement('div');
+        popup.id = 'kizuna-clear-data-popup';
+        popup.innerHTML = `
+            <div class="kizuna-clear-data-content">
+                <h3>⚠️ Clear All Local Data</h3>
+                <p><strong>WARNING:</strong> This action will permanently delete ALL local data stored in your browser for this website, including:</p>
+                <ul>
+                    <li>📦 Local Storage data</li>
+                    <li>💾 Session Storage data</li>
+                    <li>🗃️ IndexedDB databases</li>
+                    <li>📄 Browser cache</li>
+                    <li>🔧 Service Workers</li>
+                    <li>🍪 Cookies (same origin)</li>
+                </ul>
+                <p><strong>This action cannot be undone!</strong></p>
+                <p>Are you sure you want to proceed?</p>
+                <div class="kizuna-clear-data-buttons">
+                    <button onclick="window.kizunaConfirmClearData()" class="kizuna-clear-data-confirm">🗑️ Yes, Clear All Data</button>
+                    <button onclick="window.kizunaCancelClearData()" class="kizuna-clear-data-cancel">❌ Cancel</button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(popup);
+    }
+
+    // Global functions for clear data confirmation
+    window.kizunaConfirmClearData = async function() {
+        const popup = document.getElementById('kizuna-clear-data-popup');
+        const content = popup.querySelector('.kizuna-clear-data-content');
+        
+        // Show loading state
+        content.innerHTML = `
+            <h3>🔄 Clearing Data...</h3>
+            <p>Please wait while we clear all local data...</p>
+            <div class="kizuna-loading-spinner"></div>
+        `;
+
+        try {
+            const success = await clearAllData();
+            
+            if (success) {
+                content.innerHTML = `
+                    <h3>✅ Data Cleared Successfully</h3>
+                    <p>All local data has been cleared. The page will reload in 3 seconds...</p>
+                `;
+                
+                setTimeout(() => {
+                    window.location.reload(true);
+                }, 3000);
+            } else {
+                content.innerHTML = `
+                    <h3>⚠️ Partial Success</h3>
+                    <p>Some data may not have been cleared completely. The page will reload in 3 seconds...</p>
+                `;
+                
+                setTimeout(() => {
+                    window.location.reload(true);
+                }, 3000);
+            }
+        } catch (error) {
+            content.innerHTML = `
+                <h3>❌ Error</h3>
+                <p>An error occurred while clearing data: ${error.message}</p>
+                <button onclick="window.kizunaCancelClearData()" class="kizuna-clear-data-cancel">Close</button>
+            `;
+        }
+    };
+
+    window.kizunaCancelClearData = function() {
+        const popup = document.getElementById('kizuna-clear-data-popup');
+        if (popup) popup.remove();
+    };
+
     // Privacy popup
     function showPrivacyPopup() {
         if (!CONFIG.enablePrivacy) return;
@@ -445,6 +603,16 @@
             });
             menu.appendChild(privacyBtn);
         }
+
+        // ALWAYS add Clear All Data button (new feature)
+        const clearDataBtn = document.createElement('button');
+        clearDataBtn.textContent = 'Clear All Data';
+        clearDataBtn.className = 'kizuna-menu-button kizuna-clear-data-button';
+        clearDataBtn.addEventListener('click', () => {
+            showClearDataConfirmation();
+            menu.style.display = 'none';
+        });
+        menu.appendChild(clearDataBtn);
 
         // Toggle menu on burger click
         burger.addEventListener('click', () => {
