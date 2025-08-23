@@ -238,7 +238,7 @@
                 <h3>🚀 How to Use</h3>
                 <p>Add Kizuna to your website by including this script tag in your HTML:</p>
                 <div class="code-block">
-                    <code>&lt;script defer src="https://kizuna.kahiether.com/main.js?website-url=https://yoursite.com&amp;personalinfostored=no&amp;enablemdquizz=yes&amp;enablejssandbox=no&amp;enableprivacy=yes"&gt;&lt;/script&gt;</code>
+                    <code>&lt;script defer src="https://kizuna.kahiether.com/main.js?website-url=https://yoursite.com&amp;personalinfostored=no&amp;enablemdquizz=yes&amp;enablejssandbox=yes&amp;enableprivacy=yes"&gt;&lt;/script&gt;</code>
                 </div>
             </section>
 
@@ -278,135 +278,7 @@
                 <p><strong>Safety:</strong> Requires user confirmation with a detailed warning popup before proceeding. The page automatically reloads after data clearing to ensure a clean state.</p>
             </section>
 
-            <!-- Sample table for testing quiz functionality -->
-            <section>
-                <h3>📝 Sample Quiz Data (Try the quiz feature!)</h3>
-                <p>Click the hamburger menu and select "Beginner Quiz" or "Advanced Quiz" to test with this data:</p>
-                <table>
-                    <tbody>
-                        <tr>
-                            <td>What is the capital of France?</td>
-                            <td>Paris</td>
-                            <td>London</td>
-                            <td>Berlin</td>
-                        </tr>
-                        <tr>
-                            <td>What is 2 + 2?</td>
-                            <td>4</td>
-                            <td>3</td>
-                            <td>5</td>
-                        </tr>
-                        <tr>
-                            <td>What color is the sky?</td>
-                            <td>Blue</td>
-                            <td>Red</td>
-                            <td>Green</td>
-                        </tr>
-                        <tr>
-                            <td>How many days in a week?</td>
-                            <td>7</td>
-                            <td>5</td>
-                            <td>6</td>
-                        </tr>
-                        <tr>
-                            <td>What is the largest planet?</td>
-                            <td>Jupiter</td>
-                            <td>Earth</td>
-                            <td>Mars</td>
-                        </tr>
-                        <tr>
-                            <td>What is H2O?</td>
-                            <td>Water</td>
-                            <td>Oxygen</td>
-                            <td>Hydrogen</td>
-                        </tr>
-                        <tr>
-                            <td>How many continents are there?</td>
-                            <td>7</td>
-                            <td>5</td>
-                            <td>6</td>
-                        </tr>
-                        <tr>
-                            <td>What year did WW2 end?</td>
-                            <td>1945</td>
-                            <td>1944</td>
-                            <td>1946</td>
-                        </tr>
-                        <tr>
-                            <td>What is the speed of light?</td>
-                            <td>299,792 km/s</td>
-                            <td>150,000 km/s</td>
-                            <td>500,000 km/s</td>
-                        </tr>
-                        <tr>
-                            <td>Who painted the Mona Lisa?</td>
-                            <td>Leonardo da Vinci</td>
-                            <td>Michelangelo</td>
-                            <td>Van Gogh</td>
-                        </tr>
-                        <tr>
-                            <td>What is the smallest country?</td>
-                            <td>Vatican City</td>
-                            <td>Monaco</td>
-                            <td>San Marino</td>
-                        </tr>
-                        <tr>
-                            <td>How many bones in adult human?</td>
-                            <td>206</td>
-                            <td>305</td>
-                            <td>150</td>
-                        </tr>
-                        <tr>
-                            <td>What is the currency of Japan?</td>
-                            <td>Yen</td>
-                            <td>Yuan</td>
-                            <td>Won</td>
-                        </tr>
-                        <tr>
-                            <td>Which planet has the most moons?</td>
-                            <td>Saturn</td>
-                            <td>Jupiter</td>
-                            <td>Neptune</td>
-                        </tr>
-                        <tr>
-                            <td>What is the longest river?</td>
-                            <td>Nile</td>
-                            <td>Amazon</td>
-                            <td>Mississippi</td>
-                        </tr>
-                        <tr>
-                            <td>How many strings on a guitar?</td>
-                            <td>6</td>
-                            <td>5</td>
-                            <td>7</td>
-                        </tr>
-                        <tr>
-                            <td>What gas do plants produce?</td>
-                            <td>Oxygen</td>
-                            <td>Carbon Dioxide</td>
-                            <td>Nitrogen</td>
-                        </tr>
-                        <tr>
-                            <td>How many hearts does octopus have?</td>
-                            <td>3</td>
-                            <td>1</td>
-                            <td>2</td>
-                        </tr>
-                        <tr>
-                            <td>What is the largest ocean?</td>
-                            <td>Pacific</td>
-                            <td>Atlantic</td>
-                            <td>Indian</td>
-                        </tr>
-                        <tr>
-                            <td>What element is diamond made of?</td>
-                            <td>Carbon</td>
-                            <td>Silicon</td>
-                            <td>Oxygen</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
+
 
             <section class="demo">
                 <h3>🔧 Implementation Example</h3>
@@ -417,8 +289,8 @@
     &lt;tr&gt;
       &lt;td&gt;Question&lt;/td&gt;
       &lt;td&gt;Correct Answer&lt;/td&gt;
-      &lt;td&gt;Wrong Answer 1&lt;/td&gt;
-      &lt;td&gt;Wrong Answer 2&lt;/td&gt;
+      &lt;td&gt;Correct Answer 1&lt;/td&gt;
+      &lt;td&gt;Correct Answer 2&lt;/td&gt;
     &lt;/tr&gt;
     &lt;!-- More rows... --&gt;
   &lt;/tbody&gt;
@@ -428,11 +300,12 @@
         </main>
 
         <footer>
-            <p>&copy; Kizuna Web Service. MIT Licensed. | Powered by Node.js & Express</p>
+            <p>&copy; Kizuna Web Service. MIT Licensed. </p>
         </footer>
     </div>
 
    <script defer src="/main.js?website-url=https://kizuna.kahiether.com&personalinfostored=no&enablemdquizz=yes&enablejssandbox=yes&enableprivacy=yes"></script>
 </body>
 </html>
+
 
