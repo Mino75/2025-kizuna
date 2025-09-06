@@ -545,7 +545,7 @@
     
         // About → kahiether.com
         const aboutBtn = document.createElement('button');
-        aboutBtn.textContent = 'About (kahiether.com)';
+        aboutBtn.textContent = 'Kahiether';
         aboutBtn.className = 'kizuna-menu-button';
         aboutBtn.addEventListener('click', () => {
           // Open in same tab:
@@ -670,4 +670,5 @@
     // Start initialization
     init();
 })();
+
 
