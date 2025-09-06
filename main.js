@@ -533,6 +533,32 @@
         const menu = document.createElement('div');
         menu.id = 'kizuna-menu';
 
+        // Reload current page
+        const reloadBtn = document.createElement('button');
+        reloadBtn.textContent = 'Reload Page';
+        reloadBtn.className = 'kizuna-menu-button';
+        reloadBtn.addEventListener('click', () => {
+          window.location.reload(); // soft reload; use location.replace(location.href) for a "harder" refresh
+          menu.style.display = 'none';
+        });
+        menu.appendChild(reloadBtn);
+    
+        // About → kahiether.com
+        const aboutBtn = document.createElement('button');
+        aboutBtn.textContent = 'About (kahiether.com)';
+        aboutBtn.className = 'kizuna-menu-button';
+        aboutBtn.addEventListener('click', () => {
+          // Open in same tab:
+         // window.location.href = 'https://kahiether.com/';
+        
+          // If you prefer a new tab instead, use:
+           const w = window.open('https://kahiether.com/', '_blank');
+           if (w) w.opener = null; // security: prevent reverse tabnabbing
+          menu.style.display = 'none';
+        });
+        menu.appendChild(aboutBtn);
+
+        
         // Always add scroll buttons
         const startScrollBtn = document.createElement('button');
         startScrollBtn.textContent = 'Start Scroll';
@@ -644,3 +670,4 @@
     // Start initialization
     init();
 })();
+
