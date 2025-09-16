@@ -194,6 +194,46 @@
         const popup = document.createElement('div');
         popup.id = 'kizuna-privacy-popup';
         popup.innerHTML = `
+             <style>
+                    #kizuna-privacy-popup {
+                        background-color: #f8f9fa !important;
+                        color: #007bff !important;
+                    }
+                    #kizuna-privacy-popup * {
+                        background-color: transparent !important;
+                        color: #007bff !important;
+                    }
+                    #kizuna-privacy-popup .kizuna-privacy-content {
+                        background-color: #f8f9fa !important;
+                        color: #007bff !important;
+                    }
+                    #kizuna-privacy-popup .kizuna-privacy-content h3 {
+                        background-color: transparent !important;
+                        color: #007bff !important;
+                    }
+                    #kizuna-privacy-popup .kizuna-privacy-content p {
+                        background-color: transparent !important;
+                        color: #007bff !important;
+                    }
+                    #kizuna-privacy-popup .kizuna-privacy-content strong {
+                        background-color: transparent !important;
+                        color: #007bff !important;
+                        font-weight: bold;
+                    }
+                    #kizuna-privacy-popup .kizuna-privacy-buttons button {
+                        background-color: #007bff !important;
+                        color: #f8f9fa !important;
+                        border: 1px solid #007bff !important;
+                        padding: 8px 16px !important;
+                        cursor: pointer !important;
+                        border-radius: 4px !important;
+                    }
+                    #kizuna-privacy-popup .kizuna-privacy-buttons button:hover {
+                        background-color: #0056b3 !important;
+                        color: #ffffff !important;
+                    }
+                </style>
+        
             <div class="kizuna-privacy-content">
                 <h3>Privacy & GDPR Compliance</h3>
                 <p>Your privacy is important to us. This application is designed to comply with the General Data Protection Regulation (GDPR) and to ensure that your personal data remains under your control at all times.</p>        
@@ -670,5 +710,6 @@
     // Start initialization
     init();
 })();
+
 
 
