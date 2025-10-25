@@ -573,6 +573,35 @@
         const menu = document.createElement('div');
         menu.id = 'kizuna-menu';
 
+
+        // Add PWA Install button
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            console.log('PWA install prompt captured');
+        });
+        
+        const installBtn = document.createElement('button');
+        installBtn.textContent = 'INSTALL';
+        installBtn.className = 'kizuna-menu-button';
+        installBtn.addEventListener('click', async () => {
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                alert('App is already installed.');
+                return;
+            }
+            if (!deferredPrompt) {
+                alert('This website is not installable as a PWA or the prompt was not triggered.');
+                return;
+            }
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log(`User choice: ${outcome}`);
+            deferredPrompt = null;
+        });
+        menu.appendChild(installBtn);
+
+        
         // Reload current page
         const reloadBtn = document.createElement('button');
         reloadBtn.textContent = 'Reload Page';
@@ -709,40 +738,12 @@
 
 
 
-// Add PWA Install button
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    console.log('PWA install prompt captured');
-});
-
-const installBtn = document.createElement('button');
-installBtn.textContent = 'INSTALL';
-installBtn.className = 'kizuna-menu-button';
-installBtn.addEventListener('click', async () => {
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-        alert('App is already installed.');
-        return;
-    }
-    if (!deferredPrompt) {
-        alert('This website is not installable as a PWA or the prompt was not triggered.');
-        return;
-    }
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    console.log(`User choice: ${outcome}`);
-    deferredPrompt = null;
-});
-menu.appendChild(installBtn);
-
-
-
 
 
     // Start initialization
     init();
 })();
+
 
 
 
