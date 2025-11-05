@@ -12,6 +12,103 @@
 
     console.log('Kizuna initialized with config:', CONFIG);
 
+// Spawn Timer
+
+function spawnTimer() {
+    const timerBox = document.createElement('div');
+    timerBox.className = 'kizuna-timer-box';
+    timerBox.style.cssText = `
+        position: fixed;
+        top: 100px;
+        left: 100px;
+        width: 180px;
+        height: 120px;
+        background: rgba(0,0,0,0.8);
+        color: #fff;
+        padding: 10px;
+        border-radius: 8px;
+        z-index: 9999;
+        resize: both;
+        overflow: auto;
+        cursor: move;
+    `;
+
+    timerBox.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+            <strong>Timer</strong>
+            <button style="background:red;color:white;border:none;border-radius:4px;cursor:pointer;">✖</button>
+        </div>
+        <div style="margin-top:5px;">
+            <label><input type="radio" name="mode" value="timer" checked> Timer</label>
+            <label><input type="radio" name="mode" value="chrono"> Chrono</label>
+        </div>
+        <input type="number" min="1" value="3" style="width:60px;margin-top:5px;"> min
+        <div id="display" style="font-size:24px;text-align:center;margin-top:5px;">00:00</div>
+        <button style="width:100%;margin-top:5px;">Start</button>
+    `;
+
+    document.body.appendChild(timerBox);
+
+    const closeBtn = timerBox.querySelector('button');
+    const startBtn = timerBox.querySelectorAll('button')[1];
+    const display = timerBox.querySelector('#display');
+    const input = timerBox.querySelector('input[type=number]');
+    const radios = timerBox.querySelectorAll('input[name=mode]');
+    let interval, seconds = 0;
+
+    closeBtn.onclick = () => timerBox.remove();
+
+    startBtn.onclick = () => {
+        clearInterval(interval);
+        const mode = [...radios].find(r => r.checked).value;
+        if (mode === 'timer') {
+            seconds = input.value * 60;
+            updateDisplay();
+            interval = setInterval(() => {
+                seconds--;
+                updateDisplay();
+                if (seconds <= 0) {
+                    clearInterval(interval);
+                    display.textContent = 'Done';
+                }
+            }, 1000);
+        } else {
+            seconds = 0;
+            interval = setInterval(() => {
+                seconds++;
+                updateDisplay();
+            }, 1000);
+        }
+    };
+
+    function updateDisplay() {
+        const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+        const s = (seconds % 60).toString().padStart(2, '0');
+        display.textContent = `${m}:${s}`;
+    }
+
+    makeDraggable(timerBox);
+}
+
+function makeDraggable(el) {
+    let isDown = false, offset = [0,0];
+    el.addEventListener('mousedown', e => {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
+        isDown = true;
+        offset = [el.offsetLeft - e.clientX, el.offsetTop - e.clientY];
+    });
+    document.addEventListener('mouseup', () => isDown = false);
+    document.addEventListener('mousemove', e => {
+        if (!isDown) return;
+        el.style.left = (e.clientX + offset[0]) + 'px';
+        el.style.top = (e.clientY + offset[1]) + 'px';
+    });
+}
+
+
+
+
+
     // Load styles dynamically
     function loadStyles() {
         const script = document.createElement('script');
@@ -573,7 +670,17 @@
         const menu = document.createElement('div');
         menu.id = 'kizuna-menu';
 
+        // Add Timer button
+        const timerBtn = document.createElement('button');
+        timerBtn.textContent = 'Timer';
+        timerBtn.className = 'kizuna-menu-button';
+        timerBtn.addEventListener('click', () => {
+            spawnTimer();
+            menu.style.display = 'none';
+        });
+        menu.appendChild(timerBtn);
 
+        
         // Add PWA Install button
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
@@ -743,6 +850,7 @@
     // Start initialization
     init();
 })();
+
 
 
 
