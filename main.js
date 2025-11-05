@@ -18,20 +18,23 @@ function spawnTimer() {
     const timerBox = document.createElement('div');
     timerBox.className = 'kizuna-timer-box';
     timerBox.style.cssText = `
-        position: fixed;
-        top: 100px;
-        left: 100px;
-        width: 180px;
-        height: 120px;
-        background: rgba(0,0,0,0.8);
-        color: #fff;
-        padding: 10px;
-        border-radius: 8px;
-        z-index: 9999;
-        resize: both;
-        overflow: auto;
-        cursor: move;
-    `;
+    position: fixed;
+    top: 100px;
+    left: 100px;
+    width: 200px;
+    height: 150px;
+    background: rgba(0, 0, 0, 0.85);
+    color: #ffffff;
+    border: 2px solid #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 0 12px rgba(0, 123, 255, 0.6);
+    padding: 10px;
+    z-index: 9999;
+    resize: both;
+    overflow: hidden;
+    cursor: move;
+    font-family: 'Arial', sans-serif;
+    `;    
 
     timerBox.innerHTML = `
         <div style="display:flex;justify-content:space-between;align-items:center;">
@@ -43,8 +46,9 @@ function spawnTimer() {
             <label><input type="radio" name="mode" value="chrono"> Chrono</label>
         </div>
         <input type="number" min="1" value="3" style="width:60px;margin-top:5px;"> min
-        <div id="display" style="font-size:24px;text-align:center;margin-top:5px;">00:00</div>
-        <button style="width:100%;margin-top:5px;">Start</button>
+        <div id="display" style="font-size:42px;text-align:center;margin-top:8px;font-weight:bold;">00:00</div>
+        <button style="width:100%;margin-top:5px;background:#007bff;color:white;border:none;border-radius:5px;padding:5px;cursor:pointer;">Start</button>
+
     `;
 
     document.body.appendChild(timerBox);
@@ -850,6 +854,7 @@ function makeDraggable(el) {
     // Start initialization
     init();
 })();
+
 
 
 
