@@ -4,6 +4,26 @@ const fs = require('fs');
 
 const app = express();
 
+
+// Domain restriction middleware
+const allowedDomain = process.env.ALLOWED_DOMAIN;
+app.use((req, res, next) => {
+  if (!allowedDomain) return next(); // skip if not set
+
+  const referer = req.headers.referer || '';
+  try {
+    const url = new URL(referer);
+    if (
+      url.hostname === allowedDomain ||
+      url.hostname.endsWith(`.${allowedDomain}`)
+    ) {
+      return next();
+    }
+  } catch (_) {}
+  res.status(403).send('Access denied');
+});
+
+
 // Disable ALL caching - force everything to be fresh
 app.use((req, res, next) => {
   res.set({
