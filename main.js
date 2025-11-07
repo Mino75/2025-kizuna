@@ -23,6 +23,7 @@ function spawnTimer() {
     left: 100px;
     width: 200px;
     height: 150px;
+    aspect-ratio: 4 / 3;
     background: rgba(0, 0, 0, 0.85);
     color: #ffffff;
     border: 2px solid #ffffff;
@@ -31,9 +32,10 @@ function spawnTimer() {
     padding: 10px;
     z-index: 9999;
     resize: both;
-    overflow: hidden;
+    overflow: auto;
     cursor: move;
     font-family: 'Arial', sans-serif;
+    box-sizing: border-box;
     `;    
 
     timerBox.innerHTML = `
@@ -45,10 +47,11 @@ function spawnTimer() {
             <label><input type="radio" name="mode" value="timer" checked> Timer</label>
             <label><input type="radio" name="mode" value="chrono"> Chrono</label>
         </div>
-        <input type="number" min="1" value="3" style="width:60px;margin-top:5px;"> min
+        <div id="timeInput" style="margin-top:5px;">
+            <input type="number" min="1" value="3" style="width:60px;"> min
+        </div>
         <div id="display" style="font-size:42px;text-align:center;margin-top:8px;font-weight:bold;">00:00</div>
         <button style="width:100%;margin-top:5px;background:#007bff;color:white;border:none;border-radius:5px;padding:5px;cursor:pointer;">Start</button>
-
     `;
 
     document.body.appendChild(timerBox);
@@ -56,11 +59,19 @@ function spawnTimer() {
     const closeBtn = timerBox.querySelector('button');
     const startBtn = timerBox.querySelectorAll('button')[1];
     const display = timerBox.querySelector('#display');
+    const inputDiv = timerBox.querySelector('#timeInput');
     const input = timerBox.querySelector('input[type=number]');
     const radios = timerBox.querySelectorAll('input[name=mode]');
     let interval, seconds = 0;
 
     closeBtn.onclick = () => timerBox.remove();
+
+    // Handle mode switch: hide input for Chrono
+    radios.forEach(radio => {
+        radio.onchange = () => {
+            inputDiv.style.display = (radio.value === 'chrono' && radio.checked) ? 'none' : 'block';
+        };
+    });
 
     startBtn.onclick = () => {
         clearInterval(interval);
@@ -108,6 +119,7 @@ function makeDraggable(el) {
         el.style.top = (e.clientY + offset[1]) + 'px';
     });
 }
+
 
 
 
@@ -854,6 +866,7 @@ function makeDraggable(el) {
     // Start initialization
     init();
 })();
+
 
 
 
