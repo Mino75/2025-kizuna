@@ -699,11 +699,28 @@ function makeDraggable(el) {
         
         // Add PWA Install button
         let deferredPrompt;
+        
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
             console.log('PWA install prompt captured');
+        
+            // Auto-propose install if not in standalone mode
+            if (!window.matchMedia('(display-mode: standalone)').matches) {
+                setTimeout(async () => {
+                    try {
+                        deferredPrompt.prompt();
+                        const { outcome } = await deferredPrompt.userChoice;
+                        console.log(`User choice: ${outcome}`);
+                        // Keep deferredPrompt available if user dismissed
+                        if (outcome === 'accepted') deferredPrompt = null;
+                    } catch (err) {
+                        console.warn('Auto-install prompt failed:', err);
+                    }
+                }, 4000); // 4-second delay after load
+            }
         });
+
         
         const installBtn = document.createElement('button');
         installBtn.textContent = 'INSTALL';
@@ -866,6 +883,7 @@ function makeDraggable(el) {
     // Start initialization
     init();
 })();
+
 
 
 
