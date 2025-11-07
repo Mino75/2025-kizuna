@@ -718,7 +718,7 @@ function makeDraggable(el) {
                 return;
             }
             if (!deferredPrompt) {
-                alert('This website is not installable as a PWA or the prompt was not triggered.');
+                alert('App may already be installed or this website is not installable as a PWA.');
                 return;
             }
             deferredPrompt.prompt();
@@ -957,6 +957,7 @@ function makeDraggable(el) {
     // Start initialization
     init();
 })();
+
 
 
 
