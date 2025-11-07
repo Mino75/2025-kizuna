@@ -24,95 +24,99 @@ window.addEventListener('beforeinstallprompt', e => {
 // Spawn Timer
 
 function spawnTimer() {
-    const timerBox = document.createElement('div');
-    timerBox.className = 'kizuna-timer-box';
-    timerBox.style.cssText = `
+  const timerBox = document.createElement('div');
+  timerBox.className = 'kizuna-timer-box';
+  timerBox.style.cssText = `
     position: fixed;
     top: 100px;
     left: 100px;
-    width: 200px;
-    height: 150px;
-    aspect-ratio: 4 / 3;
-    background: rgba(0, 0, 0, 0.85);
+    width: 220px;
+    min-height: 230px;
+    background: #0b0b0b;
     color: #ffffff;
-    border: 2px solid #ffffff;
+    border: 2px solid #007bff;
     border-radius: 10px;
-    box-shadow: 0 0 12px rgba(0, 123, 255, 0.6);
+    box-shadow: 0 0 12px rgba(0,123,255,0.5);
     padding: 10px;
     z-index: 9999;
     resize: both;
-    overflow: auto;
-    cursor: move;
-    font-family: 'Arial', sans-serif;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-family: system-ui, sans-serif;
     box-sizing: border-box;
-    `;    
+    user-select: none;
+  `;
 
-    timerBox.innerHTML = `
-        <div style="display:flex;justify-content:space-between;align-items:center;">
-            <strong>Timer</strong>
-            <button style="background:red;color:white;border:none;border-radius:4px;cursor:pointer;">✖</button>
-        </div>
-        <div style="margin-top:5px;">
-            <label><input type="radio" name="mode" value="timer" checked> Timer</label>
-            <label><input type="radio" name="mode" value="chrono"> Chrono</label>
-        </div>
-        <div id="timeInput" style="margin-top:5px;">
-            <input type="number" min="1" value="3" style="width:60px;"> min
-        </div>
-        <div id="display" style="font-size:42px;text-align:center;margin-top:8px;font-weight:bold;">00:00</div>
-        <button style="width:100%;margin-top:5px;background:#007bff;color:white;border:none;border-radius:5px;padding:5px;cursor:pointer;">Start</button>
-    `;
+  timerBox.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+      <strong>Timer</strong>
+      <button style="background:red;color:white;border:none;border-radius:4px;cursor:pointer;font-size:14px;">✖</button>
+    </div>
+    <div style="flex-grow:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:6px;">
+      <div>
+        <label><input type="radio" name="mode" value="timer" checked> Timer</label>
+        <label><input type="radio" name="mode" value="chrono"> Chrono</label>
+      </div>
+      <div id="timeInput">
+        <input type="number" min="1" value="3" style="width:60px;text-align:center;"> <span>min</span>
+      </div>
+      <div id="display" style="font-size:42px;text-align:center;font-weight:bold;margin-top:4px;">00:00</div>
+    </div>
+    <button id="startBtn" style="width:100%;background:#007bff;color:white;border:none;border-radius:5px;padding:6px;font-size:15px;cursor:pointer;">Start</button>
+  `;
 
-    document.body.appendChild(timerBox);
+  document.body.appendChild(timerBox);
 
-    const closeBtn = timerBox.querySelector('button');
-    const startBtn = timerBox.querySelectorAll('button')[1];
-    const display = timerBox.querySelector('#display');
-    const inputDiv = timerBox.querySelector('#timeInput');
-    const input = timerBox.querySelector('input[type=number]');
-    const radios = timerBox.querySelectorAll('input[name=mode]');
-    let interval, seconds = 0;
+  const closeBtn = timerBox.querySelector('button');
+  const startBtn = timerBox.querySelector('#startBtn');
+  const display = timerBox.querySelector('#display');
+  const inputDiv = timerBox.querySelector('#timeInput');
+  const input = inputDiv.querySelector('input');
+  const radios = timerBox.querySelectorAll('input[name=mode]');
+  let interval, seconds = 0;
 
-    closeBtn.onclick = () => timerBox.remove();
+  closeBtn.onclick = () => timerBox.remove();
 
-    // Handle mode switch: hide input for Chrono
-    radios.forEach(radio => {
-        radio.onchange = () => {
-            inputDiv.style.display = (radio.value === 'chrono' && radio.checked) ? 'none' : 'block';
-        };
-    });
-
-    startBtn.onclick = () => {
-        clearInterval(interval);
-        const mode = [...radios].find(r => r.checked).value;
-        if (mode === 'timer') {
-            seconds = input.value * 60;
-            updateDisplay();
-            interval = setInterval(() => {
-                seconds--;
-                updateDisplay();
-                if (seconds <= 0) {
-                    clearInterval(interval);
-                    display.textContent = 'Done';
-                }
-            }, 1000);
-        } else {
-            seconds = 0;
-            interval = setInterval(() => {
-                seconds++;
-                updateDisplay();
-            }, 1000);
-        }
+  radios.forEach(radio => {
+    radio.onchange = () => {
+      inputDiv.style.display = (radio.value === 'chrono' && radio.checked) ? 'none' : 'block';
     };
+  });
 
-    function updateDisplay() {
-        const m = Math.floor(seconds / 60).toString().padStart(2, '0');
-        const s = (seconds % 60).toString().padStart(2, '0');
-        display.textContent = `${m}:${s}`;
+  startBtn.onclick = () => {
+    clearInterval(interval);
+    const mode = [...radios].find(r => r.checked).value;
+    if (mode === 'timer') {
+      seconds = input.value * 60;
+      updateDisplay();
+      interval = setInterval(() => {
+        seconds--;
+        updateDisplay();
+        if (seconds <= 0) {
+          clearInterval(interval);
+          display.textContent = 'Done';
+        }
+      }, 1000);
+    } else {
+      seconds = 0;
+      interval = setInterval(() => {
+        seconds++;
+        updateDisplay();
+      }, 1000);
     }
+  };
 
-    makeDraggable(timerBox);
+  function updateDisplay() {
+    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const s = (seconds % 60).toString().padStart(2, '0');
+    display.textContent = `${m}:${s}`;
+  }
+
+  makeDraggable(timerBox);
 }
+
 
 function makeDraggable(el) {
     let isDown = false, offset = [0,0];
@@ -957,6 +961,7 @@ function makeDraggable(el) {
     // Start initialization
     init();
 })();
+
 
 
 
