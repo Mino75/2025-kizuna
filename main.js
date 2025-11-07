@@ -2,7 +2,13 @@
     'use strict';
 
      let deferredPrompt; // shared for both auto and manual install
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  console.log('PWA install prompt captured early');
+});
 
+    
     
     // Configuration from server injection - NO QUOTES around placeholders!
     const CONFIG = {
@@ -701,13 +707,6 @@ function makeDraggable(el) {
         });
         menu.appendChild(timerBtn);
 
-        
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            console.log('PWA install prompt captured');
-        });
-
 
         
         const installBtn = document.createElement('button');
@@ -958,5 +957,6 @@ function makeDraggable(el) {
     // Start initialization
     init();
 })();
+
 
 
