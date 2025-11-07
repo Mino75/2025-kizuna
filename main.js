@@ -697,29 +697,14 @@ function makeDraggable(el) {
         menu.appendChild(timerBtn);
 
         
-        // Add PWA Install button
         let deferredPrompt;
         
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
             console.log('PWA install prompt captured');
-        
-            // Auto-propose install if not in standalone mode
-            if (!window.matchMedia('(display-mode: standalone)').matches) {
-                setTimeout(async () => {
-                    try {
-                        deferredPrompt.prompt();
-                        const { outcome } = await deferredPrompt.userChoice;
-                        console.log(`User choice: ${outcome}`);
-                        // Keep deferredPrompt available if user dismissed
-                        if (outcome === 'accepted') deferredPrompt = null;
-                    } catch (err) {
-                        console.warn('Auto-install prompt failed:', err);
-                    }
-                }, 4000); // 4-second delay after load
-            }
         });
+
 
         
         const installBtn = document.createElement('button');
@@ -839,6 +824,70 @@ function makeDraggable(el) {
             menu.appendChild(privacyBtn);
         }
 
+        // --- Auto-install proposal (independent, uses same deferredPrompt) ---
+        window.addEventListener('load', async () => {
+          try {
+            const manifestTag = document.querySelector('link[rel="manifest"]');
+            if (!manifestTag) {
+              console.log('[PWA] No manifest detected — auto proposal skipped');
+              return;
+            }
+        
+            // Check manifest availability
+            const res = await fetch(manifestTag.href, { method: 'HEAD' });
+            if (!res.ok) {
+              console.log('[PWA] Manifest fetch failed');
+              return;
+            }
+        
+            // Wait briefly to ensure beforeinstallprompt fired
+            setTimeout(() => {
+              if (typeof deferredPrompt !== 'undefined' && deferredPrompt && !window.matchMedia('(display-mode: standalone)').matches) {
+                showKizunaAutoInstallPopup();
+              }
+            }, 2000);
+          } catch (err) {
+            console.warn('[PWA] Auto install check failed:', err);
+          }
+        });
+        
+        function showKizunaAutoInstallPopup() {
+          if (document.getElementById('kizuna-auto-install-popup')) return;
+        
+          const popup = document.createElement('div');
+          popup.id = 'kizuna-auto-install-popup';
+          popup.style.cssText = `
+            position: fixed; bottom: 16px; left: 16px; right: 16px;
+            background: #fff; border: 1px solid #007bff; border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15); padding: 12px;
+            display: flex; align-items: center; justify-content: space-between;
+            font-family: sans-serif; z-index: 9999;
+          `;
+          popup.innerHTML = `
+            <span>Install this app for quicker access?</span>
+            <div>
+              <button id="kizuna-auto-yes" style="margin-right:8px;padding:6px 10px;background:#007bff;color:#fff;border:none;border-radius:4px;cursor:pointer;">Yes</button>
+              <button id="kizuna-auto-no" style="padding:6px 10px;background:#ccc;border:none;border-radius:4px;cursor:pointer;">Later</button>
+            </div>
+          `;
+          document.body.appendChild(popup);
+        
+          popup.querySelector('#kizuna-auto-yes').onclick = async () => {
+            popup.remove();
+            if (typeof deferredPrompt !== 'undefined' && deferredPrompt) {
+              deferredPrompt.prompt();
+              const { outcome } = await deferredPrompt.userChoice;
+              console.log('[PWA] Auto install choice:', outcome);
+              deferredPrompt = null;
+            } else {
+              alert('Install not available right now.');
+            }
+          };
+          popup.querySelector('#kizuna-auto-no').onclick = () => popup.remove();
+        }
+
+
+        
         // ALWAYS add Clear All Data button (new feature)
         const clearDataBtn = document.createElement('button');
         clearDataBtn.textContent = 'Clear All Data';
@@ -876,19 +925,6 @@ function makeDraggable(el) {
         }
     }
 
-
-
-
-
     // Start initialization
     init();
 })();
-
-
-
-
-
-
-
-
-
