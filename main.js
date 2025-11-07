@@ -686,6 +686,8 @@ function makeDraggable(el) {
         const menu = document.createElement('div');
         menu.id = 'kizuna-menu';
 
+
+        
         // Add Timer button
         const timerBtn = document.createElement('button');
         timerBtn.textContent = 'Timer';
@@ -857,17 +859,43 @@ function makeDraggable(el) {
           const popup = document.createElement('div');
           popup.id = 'kizuna-auto-install-popup';
           popup.style.cssText = `
-            position: fixed; bottom: 16px; left: 16px; right: 16px;
-            background: #fff; border: 1px solid #007bff; border-radius: 8px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.15); padding: 12px;
-            display: flex; align-items: center; justify-content: space-between;
-            font-family: sans-serif; z-index: 9999;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 999999;
           `;
+        
           popup.innerHTML = `
-            <span>Install this app for quicker access?</span>
-            <div>
-              <button id="kizuna-auto-yes" style="margin-right:8px;padding:6px 10px;background:#007bff;color:#fff;border:none;border-radius:4px;cursor:pointer;">Yes</button>
-              <button id="kizuna-auto-no" style="padding:6px 10px;background:#ccc;border:none;border-radius:4px;cursor:pointer;">Later</button>
+            <div id="kizuna-auto-install-box"
+              style="
+                background: #111;
+                color: #f8f9fa;
+                border: 2px solid #007bff;
+                border-radius: 12px;
+                padding: 20px 24px;
+                text-align: center;
+                max-width: 360px;
+                width: 90%;
+                box-shadow: 0 0 25px rgba(0,123,255,0.6);
+                font-family: system-ui, sans-serif;
+              ">
+              <h3 style="margin:0 0 12px 0;font-size:20px;color:#00aaff;">Install this App?</h3>
+              <p style="margin:0 0 18px 0;font-size:15px;line-height:1.4;">
+                Add this Progressive Web App to your home screen for faster access and an app-like experience.
+              </p>
+              <div style="display:flex;justify-content:center;gap:10px;">
+                <button id="kizuna-auto-yes"
+                  style="background:#007bff;color:#fff;border:none;border-radius:6px;
+                         padding:8px 16px;cursor:pointer;font-size:15px;">
+                  Install
+                </button>
+                <button id="kizuna-auto-no"
+                  style="background:#333;color:#ccc;border:1px solid #555;
+                         border-radius:6px;padding:8px 16px;cursor:pointer;font-size:15px;">
+                  Later
+                </button>
+              </div>
             </div>
           `;
           document.body.appendChild(popup);
@@ -883,6 +911,7 @@ function makeDraggable(el) {
               alert('Install not available right now.');
             }
           };
+        
           popup.querySelector('#kizuna-auto-no').onclick = () => popup.remove();
         }
 
@@ -928,3 +957,4 @@ function makeDraggable(el) {
     // Start initialization
     init();
 })();
+
