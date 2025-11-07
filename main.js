@@ -1,5 +1,8 @@
 (function() {
     'use strict';
+
+     let deferredPrompt; // shared for both auto and manual install
+
     
     // Configuration from server injection - NO QUOTES around placeholders!
     const CONFIG = {
@@ -699,8 +702,6 @@ function makeDraggable(el) {
         menu.appendChild(timerBtn);
 
         
-        let deferredPrompt;
-        
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
@@ -957,4 +958,5 @@ function makeDraggable(el) {
     // Start initialization
     init();
 })();
+
 
