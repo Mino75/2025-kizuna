@@ -456,6 +456,110 @@ window.applyKizunaStyles = function() {
         .no-scroll {
             overflow: hidden;
         }
+        /* ============================
+       TIMER BOX
+    ============================ */
+    .kizuna-timer-box {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: rgba(var(--kizuna-bg-rgb), 0.85);
+        color: var(--kizuna-text);
+        padding: 12px 16px;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 500;
+        box-shadow: 0px 4px 12px rgba(0,0,0,0.15);
+        backdrop-filter: blur(8px);
+        z-index: 9999;
+        user-select: none;
+    }
+    
+    /* ============================
+       AUTO-INSTALL POPUP BACKDROP
+    ============================ */
+    #kizuna-auto-install-popup {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        backdrop-filter: blur(6px);
+        background: rgba(0,0,0,0.45);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 999999;
+        animation: kizuna-fadeIn 0.3s ease;
+    }
+    
+    /* ============================
+       AUTO-INSTALL BOX
+    ============================ */
+    #kizuna-auto-install-box {
+        background: var(--kizuna-bg);
+        color: var(--kizuna-text);
+        padding: 24px;
+        border-radius: 16px;
+        max-width: 380px;
+        width: 90%;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+        text-align: center;
+        animation: kizuna-slideDown 0.25s ease;
+    }
+    
+    /* Popup title */
+    #kizuna-auto-install-box h3 {
+        margin-top: 0;
+        font-size: 20px;
+        font-weight: 600;
+    }
+    
+    /* Popup description */
+    #kizuna-auto-install-box p {
+        font-size: 15px;
+        line-height: 1.5;
+        margin-bottom: 20px;
+    }
+
+    /* ============================
+       AUTO-INSTALL BUTTONS
+    ============================ */
+    .kizuna-auto-install-buttons {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+    }
+    
+    .kizuna-auto-install-buttons button {
+        padding: 8px 16px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        border: none;
+        transition: all 0.25s ease;
+    }
+    
+    /* Primary Confirm Button */
+    .kizuna-auto-install-confirm {
+        background: var(--kizuna-accent);
+        color: #ffffff;
+    }
+    .kizuna-auto-install-confirm:hover {
+        opacity: 0.85;
+    }
+    
+    /* Secondary Cancel Button */
+    .kizuna-auto-install-cancel {
+        background: rgba(var(--kizuna-bg-rgb), 0.7);
+        color: var(--kizuna-text);
+    }
+    .kizuna-auto-install-cancel:hover {
+        background: rgba(var(--kizuna-bg-rgb), 0.9);
+    }
+
+        
     `;
 
     // Remove existing Kizuna styles if any
@@ -472,3 +576,4 @@ window.applyKizunaStyles = function() {
 
     console.log('Kizuna styles applied successfully');
 };
+
