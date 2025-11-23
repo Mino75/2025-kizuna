@@ -379,15 +379,17 @@ window.kizunaAddPinyin = function(btn) {
     const pinyinLib = window.pinyinPro;
     
     if (!pinyinLib) {
-        console.error('pinyinPro library not found');
+        console.error('PinyinPro library not found');
         return;
     }
 
     const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
     const textNodes = [];
 
+    // Collect all text nodes
     while (walk.nextNode()) {
         const node = walk.currentNode;
+        // Only process nodes that contain Chinese characters
         if (/[一-龥]/.test(node.textContent)) {
             textNodes.push(node);
         }
@@ -397,13 +399,30 @@ window.kizunaAddPinyin = function(btn) {
         const parent = node.parentNode;
         if (['SCRIPT', 'STYLE', 'NOSCRIPT'].includes(parent.tagName)) return;
 
-        const span = document.createElement('span');
-        // Use the correct function: pinyin()
-        span.innerHTML = pinyinLib.pinyin(node.textContent, { toneType: 'num' });
-        parent.replaceChild(span, node);
+        // Split the text into parts: Chinese and non-Chinese
+        const parts = node.textContent.split(/([一-龥])/);
+        
+        // Create a fragment to hold the new content
+        const fragment = document.createDocumentFragment();
+        
+        parts.forEach(part => {
+            if (/[一-龥]/.test(part)) {
+                // This is Chinese - wrap with pinyin
+                const span = document.createElement('span');
+                span.innerHTML = pinyinLib.pinyin(part, { toneType: 'num' });
+                fragment.appendChild(span);
+            } else if (part.trim() !== '') {
+                // This is non-Chinese text - keep as-is
+                fragment.appendChild(document.createTextNode(part));
+            }
+            // Empty strings are ignored
+        });
+
+        // Replace the original text node with our new fragment
+        parent.replaceChild(fragment, node);
     });
 
-    console.log('Pinyin added successfully');
+    console.log('Pinyin added to Chinese characters only');
 };
     // Copy sandbox output to clipboard
     window.kizunaCopyOutput = function(btn) {
@@ -976,6 +995,7 @@ window.kizunaAddPinyin = function(btn) {
     // Start initialization
     init();
 })();
+
 
 
 
