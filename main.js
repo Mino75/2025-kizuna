@@ -114,6 +114,12 @@ function makeDraggable(el) {
 
 // Load PinyinPro dynamically
 function loadPinyinPro(callback) {
+        // Avoid loading twice
+    if (window.PinyinPro) {
+        callback();
+        return;
+    }
+
     const script = document.createElement('script');
     script.src = '/pinyin-pro@3.12.0.js';
     script.onload = () => {
@@ -938,6 +944,7 @@ function loadPinyinPro(callback) {
     // Start initialization
     init();
 })();
+
 
 
 
