@@ -89,7 +89,7 @@ function spawnTimer() {
     clearInterval(interval);
     const mode = [...radios].find(r => r.checked).value;
     if (mode === 'timer') {
-      seconds = input.value * 60;
+      seconds = Number(input.value) * 60;
       updateDisplay();
       interval = setInterval(() => {
         seconds--;
@@ -381,13 +381,13 @@ function makeDraggable(el) {
 
     // JavaScript 
     function createJsSandbox() {
-        if (!CONFIG.enableJs) return null;
+        if (!CONFIG.enableJsSandbox) return null;
         
         const existing = document.getElementById('kizuna-js-');
         if (existing) existing.remove();
         
         const sandbox = document.createElement('div');
-        sandbox.id = 'kizuna-js-';
+        sandbox.id = 'kizuna-js-sandbox';
         sandbox.innerHTML = `
             <div class="kizuna--content">
                 <h3>JavaScript </h3>
@@ -399,7 +399,7 @@ function makeDraggable(el) {
                     <button onclick="window.kizunaAddPinyin(this)">Add Pinyin</button>
                     <button onclick="window.kizunaCopyOutput(this)">Copy Console Output</button>
                 </div>
-                <div class="kizuna--output"></div>
+                <div class="kizuna-sandbox-output"></div>
             </div>
         `;
         return sandbox;
@@ -989,6 +989,7 @@ function makeDraggable(el) {
     // Start initialization
     init();
 })();
+
 
 
 
