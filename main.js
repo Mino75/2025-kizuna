@@ -365,20 +365,38 @@ function loadPinyinPro(callback) {
     window.kizunaAddPinyin = function(btn) {
         loadPinyinPro(() => {
             const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+            const textNodes = [];
+    
+            // Collect all text nodes containing Chinese characters
             while (walk.nextNode()) {
                 const node = walk.currentNode;
-                if (/[一-龥]/.test(node.textContent)) { // contains Chinese
-                    node.parentNode.innerHTML = PinyinPro.spell(node.textContent, { toneType: 'num' });
+                if (/[一-龥]/.test(node.textContent)) {
+                    textNodes.push(node);
                 }
             }
-            console.log('Pinyin added to all Chinese characters');
+    
+            textNodes.forEach(node => {
+                const parent = node.parentNode;
+    
+                // Skip script/style tags to avoid breaking the page
+                if (['SCRIPT', 'STYLE', 'NOSCRIPT'].includes(parent.tagName)) return;
+    
+                // Create a span wrapper with pinyin
+                const span = document.createElement('span');
+                span.innerHTML = PinyinPro.spell(node.textContent, { toneType: 'num' });
+    
+                // Replace only the text node with the new span
+                parent.replaceChild(span, node);
+            });
+    
+            console.log('Pinyin added safely to all Chinese characters');
         });
     };
     
     // Copy sandbox output to clipboard
     window.kizunaCopyOutput = function(btn) {
         const sandbox = btn.closest('#kizuna-js-sandbox');
-        const outputDiv = sandbox.querySelector('.kizuna--output');
+        const outputDiv = sandbox.querySelector('.kizuna-sandbox-output');
         if (!outputDiv) return;
         navigator.clipboard.writeText(outputDiv.innerText)
             .then(() => console.log('Sandbox output copied to clipboard'))
@@ -944,6 +962,7 @@ function loadPinyinPro(callback) {
     // Start initialization
     init();
 })();
+
 
 
 
