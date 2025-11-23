@@ -383,7 +383,7 @@ function makeDraggable(el) {
     function createJsSandbox() {
         if (!CONFIG.enableJsSandbox) return null;
         
-        const existing = document.getElementById('kizuna-js-');
+        const existing = document.getElementById('kizuna-js-sandbox');
         if (existing) existing.remove();
         
         const sandbox = document.createElement('div');
@@ -394,8 +394,8 @@ function makeDraggable(el) {
                 <textarea placeholder="Paste your JavaScript code here..." rows="10"></textarea>
                 <div class="kizuna-sandbox-buttons">
                     <button onclick="window.kizunaExecuteScript(this)">Execute</button>
-                    <button onclick="window.kizunaClear(this)">Clear</button>
-                    <button onclick="window.kizunaClose(this)">Close</button>
+                    <button onclick="window.kizunaClearSandbox(this)">Clear</button>
+                    <button onclick="window.kizunaCloseSandbox(this)">Close</button>
                     <button onclick="window.kizunaAddPinyin(this)">Add Pinyin</button>
                     <button onclick="window.kizunaCopyOutput(this)">Copy Console Output</button>
                 </div>
@@ -422,7 +422,7 @@ function makeDraggable(el) {
     
     // Copy sandbox output to clipboard
     window.kizunaCopyOutput = function(btn) {
-        const sandbox = btn.closest('#kizuna-js-');
+        const sandbox = btn.closest('#kizuna-js-sandbox');
         const outputDiv = sandbox.querySelector('.kizuna--output');
         if (!outputDiv) return;
         navigator.clipboard.writeText(outputDiv.innerText)
@@ -989,6 +989,7 @@ function makeDraggable(el) {
     // Start initialization
     init();
 })();
+
 
 
 
