@@ -127,6 +127,29 @@ app.get('/styles.js', (req, res) => {
   }
 });
 
+//PinyinPro endpoint
+
+app.get('/pinyinPro.js', (req, res) => {
+  res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+  
+  console.log(`[${new Date().toISOString()}] pinyinPro.js requested`);
+  
+  try {
+    const filePath = path.join(__dirname, 'pinyinPro.js');
+    const fileContent = fs.readFileSync(filePath, 'utf8');
+    
+    // Add timestamp for debugging
+    const timestampedContent = `// PinyinPro loaded at ${new Date().toISOString()}\n${fileContent}`;
+    
+    res.send(timestampedContent);
+  } catch (error) {
+    console.error('Error serving pinyinPro.js:', error);
+    res.status(500).send(`// Error loading pinyinPro.js: ${error.message}`);
+  }
+});
+
+
+
 // Root endpoint - serve the demo page
 app.get('/', (req, res) => {
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
