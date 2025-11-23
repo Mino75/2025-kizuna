@@ -376,7 +376,7 @@ function loadPinyinPro(callback) {
 
     // Add pinyin to all Chinese characters on the page
 window.kizunaAddPinyin = function(btn) {
-    const pinyinLib = window.pinyinPro; // Create local reference
+    const pinyinLib = window.pinyinPro;
     
     if (!pinyinLib) {
         console.error('PinyinPro library not found');
@@ -398,7 +398,8 @@ window.kizunaAddPinyin = function(btn) {
         if (['SCRIPT', 'STYLE', 'NOSCRIPT'].includes(parent.tagName)) return;
 
         const span = document.createElement('span');
-        span.innerHTML = pinyinLib.spell(node.textContent, { toneType: 'num' }); // Use local variable
+        // Use the correct function: pinyin()
+        span.innerHTML = pinyinLib.pinyin(node.textContent, { toneType: 'num' });
         parent.replaceChild(span, node);
     });
 
@@ -975,6 +976,7 @@ window.kizunaAddPinyin = function(btn) {
     // Start initialization
     init();
 })();
+
 
 
 
