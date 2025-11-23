@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script defer src="https://analytics.kahiether.com/script.js" data-website-id="106b9899-134b-42a8-a949-a0a934031b9b"></script>
-    <title> 絆 Kizuna Service</title>
+    <title>🔗 絆 Kizuna Service</title>
     <style>
         /* Basic page styles - separate from Kizuna styles */
         * {
@@ -14,7 +14,7 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
             line-height: 1.6;
             color: #333;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -92,8 +92,14 @@
             border-left: 4px solid #667eea;
         }
         
+        .feature.new {
+            border-left-color: #28a745;
+            background: #d4edda;
+        }
+        
         .feature.danger {
             border-left-color: #dc3545;
+            background: #f8d7da;
         }
         
         .code-block {
@@ -131,6 +137,14 @@
             margin: 20px 0;
         }
         
+        table caption {
+            padding: 10px;
+            font-weight: bold;
+            background: #667eea;
+            color: white;
+            border-radius: 5px 5px 0 0;
+        }
+        
         table td {
             padding: 12px;
             border: 1px solid #ddd;
@@ -150,6 +164,7 @@
             padding: 20px;
             border-radius: 8px;
             border: 2px solid #ffc107;
+            margin: 20px 0;
         }
         
         .demo h3 {
@@ -165,6 +180,25 @@
         
         .warning h3 {
             color: #721c24;
+        }
+        
+        .success {
+            background: #d4edda;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #28a745;
+        }
+        
+        .success h3 {
+            color: #155724;
+        }
+        
+        .chinese-example {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-size: 1.2em;
         }
         
         footer {
@@ -192,8 +226,8 @@
 <body>
     <div class="container">
         <header>
-            <h1>🔗 Kizuna 絆 </h1>
-            <p>Website  Service Injection </p>
+            <h1>🔗 Kizuna 絆</h1>
+            <p>Website Enhancement Service with PWA Support</p>
         </header>
 
         <main>
@@ -205,31 +239,53 @@
             <section class="demo">
                 <h3>🎯 Live Demo Active!</h3>
                 <p>The Kizuna menu is available on this page! Look for the <strong>hamburger menu (☰)</strong> in the bottom-right corner to try out all features.</p>
-                <p><strong>Features enabled on this page:</strong> Auto-scroll, Quiz System, JavaScript Sandbox, Privacy Popup, and Clear All Data</p>
+                <p><strong>Features enabled on this page:</strong> Timer, PWA Install, Auto-scroll, Quiz System, JavaScript Sandbox with Pinyin, Privacy Popup, and Clear All Data</p>
+            </section>
+
+            <section class="success">
+                <h3>🆕 New Features Released!</h3>
+                <ul>
+                    <li><strong>⏱️ Timer Widget:</strong> Draggable timer with countdown and stopwatch modes</li>
+                    <li><strong>📱 PWA Auto-Install:</strong> Automatic detection and installation prompt for Progressive Web Apps</li>
+                    <li><strong>🈯 Add Pinyin:</strong> Automatically adds pinyin pronunciation to Chinese characters</li>
+                    <li><strong>🔄 Page Reload:</strong> Quick page refresh option in menu</li>
+                </ul>
             </section>
 
             <section class="features">
-                <h3>✨ Available Features</h3>
+                <h3>✨ All Available Features</h3>
                 <div class="feature-grid">
+                    <div class="feature new">
+                        <h4>⏱️ Timer Widget</h4>
+                        <p>Draggable timer with countdown and chronometer modes. Perfect for timed activities and tracking.</p>
+                    </div>
+                    <div class="feature new">
+                        <h4>📱 PWA Installation</h4>
+                        <p>Auto-detects PWA capability and prompts for installation. Manual install also available.</p>
+                    </div>
+                    <div class="feature new">
+                        <h4>🈯 Chinese Pinyin</h4>
+                        <p>Adds pinyin pronunciation to all Chinese characters on the page while preserving original text.</p>
+                    </div>
                     <div class="feature">
                         <h4>📜 Auto Scroll</h4>
-                        <p>Intelligent scrolling functionality with zoom awareness and adjustable speed</p>
+                        <p>Intelligent scrolling with zoom awareness and adjustable speed control.</p>
                     </div>
                     <div class="feature">
                         <h4>🎯 Interactive Quizzes</h4>
-                        <p>Dynamic quiz system with beginner and advanced modes, timer support</p>
+                        <p>Dynamic quiz generation from table data with beginner and advanced modes.</p>
                     </div>
                     <div class="feature">
                         <h4>💻 JavaScript Sandbox</h4>
-                        <p>Safe code execution environment for testing and validation</p>
+                        <p>Safe code execution environment with console output capture and copy functionality.</p>
                     </div>
                     <div class="feature">
                         <h4>🔒 Privacy Compliance</h4>
-                        <p>GDPR-compliant privacy popups and information management</p>
+                        <p>GDPR-compliant privacy popups with detailed information management.</p>
                     </div>
                     <div class="feature danger">
                         <h4>🗑️ Clear All Data</h4>
-                        <p><strong>NEW:</strong> Complete local data cleanup - IndexedDB, cache, service workers, localStorage, sessionStorage, and cookies with confirmation popup</p>
+                        <p>Complete local data cleanup - IndexedDB, cache, service workers, storage, and cookies.</p>
                     </div>
                 </div>
             </section>
@@ -239,6 +295,112 @@
                 <p>Add Kizuna to your website by including this script tag in your HTML:</p>
                 <div class="code-block">
                     <code>&lt;script defer src="https://kizuna.kahiether.com/main.js?website-url=https://yoursite.com&amp;personalinfostored=no&amp;enablemdquizz=yes&amp;enablejssandbox=yes&amp;enableprivacy=yes"&gt;&lt;/script&gt;</code>
+                </div>
+            </section>
+
+            <section>
+                <h3>📝 Sample Quiz Table</h3>
+                <p>This table can be used to test the quiz functionality. Click "Beginner Quiz" or "Advanced Quiz" in the Kizuna menu!</p>
+                <table>
+                    <caption>Japanese Language Basics</caption>
+                    <tbody>
+                        <tr>
+                            <td>What does "ありがとう" (arigatou) mean?</td>
+                            <td>Thank you</td>
+                            <td>Thanks</td>
+                            <td>Gratitude</td>
+                        </tr>
+                        <tr>
+                            <td>What is "こんにちは" (konnichiwa)?</td>
+                            <td>Hello</td>
+                            <td>Good afternoon</td>
+                            <td>Hi</td>
+                        </tr>
+                        <tr>
+                            <td>What does "さようなら" (sayounara) mean?</td>
+                            <td>Goodbye</td>
+                            <td>Farewell</td>
+                            <td>See you</td>
+                        </tr>
+                        <tr>
+                            <td>What is "すみません" (sumimasen)?</td>
+                            <td>Excuse me</td>
+                            <td>Sorry</td>
+                            <td>Pardon</td>
+                        </tr>
+                        <tr>
+                            <td>What does "はい" (hai) mean?</td>
+                            <td>Yes</td>
+                            <td>Correct</td>
+                            <td>Affirmative</td>
+                        </tr>
+                        <tr>
+                            <td>What is "いいえ" (iie)?</td>
+                            <td>No</td>
+                            <td>Negative</td>
+                            <td>Not</td>
+                        </tr>
+                        <tr>
+                            <td>What does "おはよう" (ohayou) mean?</td>
+                            <td>Good morning</td>
+                            <td>Morning</td>
+                            <td>Early greeting</td>
+                        </tr>
+                        <tr>
+                            <td>What is "おやすみ" (oyasumi)?</td>
+                            <td>Good night</td>
+                            <td>Sleep well</td>
+                            <td>Night</td>
+                        </tr>
+                        <tr>
+                            <td>What does "元気" (genki) mean?</td>
+                            <td>Healthy</td>
+                            <td>Fine</td>
+                            <td>Well</td>
+                        </tr>
+                        <tr>
+                            <td>What is "愛" (ai)?</td>
+                            <td>Love</td>
+                            <td>Affection</td>
+                            <td>Care</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section>
+                <h3>🈯 Chinese Text Examples</h3>
+                <p>Try the "Add Pinyin" feature in the JS Sandbox or menu to see pinyin added to these Chinese characters:</p>
+                <div class="chinese-example">
+                    <p>你好世界 - Hello World</p>
+                    <p>学习中文很有趣 - Learning Chinese is interesting</p>
+                    <p>今天天气很好 - The weather is nice today</p>
+                    <p>我喜欢编程 - I like programming</p>
+                    <p>这是一个测试 - This is a test</p>
+                </div>
+            </section>
+
+            <section>
+                <h3>💻 JavaScript Sandbox Examples</h3>
+                <p>Try these code snippets in the JS Sandbox:</p>
+                <div class="code-block">
+                    <code>// Example 1: Chinese character processing
+const chinese = "你好世界";
+console.log("Original:", chinese);
+console.log("Length:", chinese.length);
+
+// Example 2: Timer function
+let count = 5;
+const timer = setInterval(() => {
+    console.log("Countdown:", count);
+    count--;
+    if (count < 0) clearInterval(timer);
+}, 1000);
+
+// Example 3: Array manipulation
+const numbers = [1, 2, 3, 4, 5];
+const doubled = numbers.map(n => n * 2);
+console.log("Doubled:", doubled);</code>
                 </div>
             </section>
 
@@ -258,54 +420,58 @@
                         <strong>enablejssandbox:</strong> "yes" or "no" - Enable the JavaScript sandbox feature
                     </div>
                     <div class="param">
-                        <strong>enableprivacy:</strong> "yes" or "no" - Enable GDPR privacy popup on page load
+                        <strong>enableprivacy:</strong> "yes" or "no" - Enable GDPR privacy popup
                     </div>
                 </div>
             </section>
 
+            <section>
+                <h3>🔄 Always Available Features</h3>
+                <p>These features are available in every Kizuna installation, regardless of configuration:</p>
+                <ul>
+                    <li>⏱️ <strong>Timer:</strong> Countdown timer and chronometer</li>
+                    <li>📱 <strong>Install PWA:</strong> Progressive Web App installation</li>
+                    <li>📜 <strong>Auto Scroll:</strong> Start/stop automatic scrolling</li>
+                    <li>🔄 <strong>Reload Page:</strong> Quick page refresh</li>
+                    <li>🈯 <strong>Add Pinyin:</strong> Chinese character support (when JS Sandbox is enabled)</li>
+                    <li>🗑️ <strong>Clear All Data:</strong> Complete local data management</li>
+                    <li>🔗 <strong>Kahiether:</strong> Link to service provider</li>
+                </ul>
+            </section>
+
             <section class="warning">
                 <h3>⚠️ Clear All Data Feature</h3>
-                <p><strong>Important:</strong> The "Clear All Data" button is always available in the Kizuna menu, regardless of configuration parameters. This feature provides users with complete control over their local data.</p>
+                <p><strong>Important:</strong> The "Clear All Data" button provides complete control over local browser data.</p>
                 <p><strong>What it clears:</strong></p>
                 <ul>
                     <li>🗄️ <strong>localStorage:</strong> All key-value pairs stored locally</li>
                     <li>📝 <strong>sessionStorage:</strong> All session-specific data</li>
                     <li>🗃️ <strong>IndexedDB:</strong> All databases and their contents</li>
-                    <li>📄 <strong>Cache API:</strong> All cached resources</li>
+                    <li>📄 <strong>Cache API:</strong> All cached resources and service worker caches</li>
                     <li>🔧 <strong>Service Workers:</strong> Unregisters all service workers</li>
                     <li>🍪 <strong>Cookies:</strong> Same-origin cookies (best effort)</li>
                 </ul>
-                <p><strong>Safety:</strong> Requires user confirmation with a detailed warning popup before proceeding. The page automatically reloads after data clearing to ensure a clean state.</p>
+                <p><strong>Safety:</strong> Requires user confirmation with detailed warning popup. Page automatically reloads after clearing.</p>
             </section>
 
-
-
             <section class="demo">
-                <h3>🔧 Implementation Example</h3>
-                <p>For testing the quiz functionality on your own site, ensure your table follows this structure:</p>
-                <div class="code-block">
-                    <code>&lt;table&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Question&lt;/td&gt;
-      &lt;td&gt;Correct Answer&lt;/td&gt;
-      &lt;td&gt;Correct Answer 1&lt;/td&gt;
-      &lt;td&gt;Correct Answer 2&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;!-- More rows... --&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;</code>
-                </div>
+                <h3>🌐 Browser Compatibility</h3>
+                <ul>
+                    <li>✅ Chrome/Edge 90+ (Full support)</li>
+                    <li>✅ Firefox 88+ (Full support)</li>
+                    <li>✅ Safari 14+ (Full support)</li>
+                    <li>✅ Mobile browsers with ES6 support</li>
+                    <li>⚠️ PWA installation requires HTTPS and manifest.json</li>
+                </ul>
             </section>
         </main>
 
         <footer>
-            <p>&copy; Kizuna Web Service. MIT Licensed. </p>
+            <p>&copy; 2025 Kizuna Web Service. MIT Licensed.</p>
+            <p>絆 - Strengthening bonds through enhanced functionality</p>
         </footer>
     </div>
 
-   <script defer src="/main.js?website-url=https://kizuna.kahiether.com&personalinfostored=no&enablemdquizz=yes&enablejssandbox=yes&enableprivacy=yes"></script>
+    <script defer src="/main.js?website-url=https://kizuna.kahiether.com&personalinfostored=no&enablemdquizz=yes&enablejssandbox=yes&enableprivacy=yes"></script>
 </body>
 </html>
-
-
