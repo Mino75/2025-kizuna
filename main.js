@@ -386,43 +386,47 @@ window.kizunaAddPinyin = function(btn) {
     const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
     const textNodes = [];
 
-    // Collect all text nodes
+    // Collect all text nodes with Chinese characters
     while (walk.nextNode()) {
         const node = walk.currentNode;
-        // Only process nodes that contain Chinese characters
-        if (/[一-龥]/.test(node.textContent)) {
-            textNodes.push(node);
+        if (/[一-龥]/.test(node.textContent) && node.textContent.trim() !== '') {
+            const parent = node.parentNode;
+            if (parent && !['SCRIPT', 'STYLE', 'NOSCRIPT'].includes(parent.tagName)) {
+                textNodes.push(node);
+            }
         }
     }
 
     textNodes.forEach(node => {
+        const originalText = node.textContent;
         const parent = node.parentNode;
-        if (['SCRIPT', 'STYLE', 'NOSCRIPT'].includes(parent.tagName)) return;
-
-        // Split the text into parts: Chinese and non-Chinese
-        const parts = node.textContent.split(/([一-龥])/);
         
-        // Create a fragment to hold the new content
+        // Create a fragment to replace this text node
         const fragment = document.createDocumentFragment();
         
-        parts.forEach(part => {
-            if (/[一-龥]/.test(part)) {
-                // This is Chinese - wrap with pinyin
-                const span = document.createElement('span');
-                span.innerHTML = pinyinLib.pinyin(part, { toneType: 'num' });
-                fragment.appendChild(span);
-            } else if (part.trim() !== '') {
-                // This is non-Chinese text - keep as-is
-                fragment.appendChild(document.createTextNode(part));
+        // Process character by character within this text node
+        for (let i = 0; i < originalText.length; i++) {
+            const char = originalText[i];
+            
+            if (/[一-龥]/.test(char)) {
+                // 1. Keep the original Chinese character
+                fragment.appendChild(document.createTextNode(char));
+                
+                // 2. Add the pinyin after it
+                const pinyinSpan = document.createElement('span');
+                pinyinSpan.innerHTML = ' ' + pinyinLib.pinyin(char, { toneType: 'num' });
+                fragment.appendChild(pinyinSpan);
+            } else {
+                // This is not Chinese - keep as-is
+                fragment.appendChild(document.createTextNode(char));
             }
-            // Empty strings are ignored
-        });
-
-        // Replace the original text node with our new fragment
+        }
+        
+        // Replace ONLY this text node
         parent.replaceChild(fragment, node);
     });
 
-    console.log('Pinyin added to Chinese characters only');
+    console.log('Pinyin added while preserving original characters and HTML structure');
 };
     // Copy sandbox output to clipboard
     window.kizunaCopyOutput = function(btn) {
@@ -903,19 +907,7 @@ window.kizunaAddPinyin = function(btn) {
           `;
         
           popup.innerHTML = `
-            <div id="kizuna-auto-install-box"
-              style="
-                background: #111;
-                color: #f8f9fa;
-                border: 2px solid #007bff;
-                border-radius: 12px;
-                padding: 20px 24px;
-                text-align: center;
-                max-width: 360px;
-                width: 90%;
-                box-shadow: 0 0 25px rgba(0,123,255,0.6);
-                font-family: system-ui, sans-serif;
-              ">
+            <div id="kizuna-auto-install-box">
               <h3 style="margin:0 0 12px 0;font-size:20px;color:#00aaff;">Install this App?</h3>
               <p style="margin:0 0 18px 0;font-size:15px;line-height:1.4;">
                 Add this Progressive Web App to your home screen for faster access and an app-like experience.
@@ -995,6 +987,7 @@ window.kizunaAddPinyin = function(btn) {
     // Start initialization
     init();
 })();
+
 
 
 
