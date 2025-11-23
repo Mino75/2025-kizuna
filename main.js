@@ -961,6 +961,7 @@ window.kizunaAddPinyin = function(btn) {
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => {
                 loadStyles();
+                loadPinyinPro(); // Load PinyinPro at startup
                 setTimeout(createMenu, 100);
             });
         } else {
@@ -973,6 +974,7 @@ window.kizunaAddPinyin = function(btn) {
     // Start initialization
     init();
 })();
+
 
 
 
