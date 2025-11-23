@@ -121,7 +121,12 @@ function loadPinyinPro(callback) {
     }
 
     const script = document.createElement('script');
-    script.src = '/pinyin-pro@3.12.0.js';
+    
+    // Use the same logic as loadStyles
+    script.src = window.location.hostname === 'kizuna.kahiether.com' 
+        ? '/pinyin-pro@3.12.0.js' 
+        : 'https://kizuna.kahiether.com/pinyin-pro@3.12.0.js';
+    
     script.onload = () => {
         console.log('PinyinPro loaded successfully');
         // Small delay to ensure the script is fully initialized
@@ -133,6 +138,7 @@ function loadPinyinPro(callback) {
             }
         }, 100);
     };
+    
     script.onerror = () => console.error('Failed to load PinyinPro');
     document.head.appendChild(script);
 }
@@ -974,6 +980,7 @@ window.kizunaAddPinyin = function(btn) {
     // Start initialization
     init();
 })();
+
 
 
 
