@@ -129,13 +129,13 @@ app.get('/styles.js', (req, res) => {
 
 //PinyinPro endpoint
 
-app.get('/pinyinPro.js', (req, res) => {
+app.get('/pinyin-pro@3.12.0.js', (req, res) => {
   res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
   
-  console.log(`[${new Date().toISOString()}] pinyinPro.js requested`);
+  console.log(`[${new Date().toISOString()}] pinyin-pro@3.12.0.js requested`);
   
   try {
-    const filePath = path.join(__dirname, 'pinyinPro.js');
+    const filePath = path.join(__dirname, 'pinyin-pro@3.12.0.js');
     const fileContent = fs.readFileSync(filePath, 'utf8');
     
     // Add timestamp for debugging
@@ -143,8 +143,8 @@ app.get('/pinyinPro.js', (req, res) => {
     
     res.send(timestampedContent);
   } catch (error) {
-    console.error('Error serving pinyinPro.js:', error);
-    res.status(500).send(`// Error loading pinyinPro.js: ${error.message}`);
+    console.error('Error serving pinyin-pro@3.12.0.js:', error);
+    res.status(500).send(`// Error loading pinyin-pro@3.12.0.js: ${error.message}`);
   }
 });
 
