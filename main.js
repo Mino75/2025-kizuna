@@ -376,16 +376,16 @@ function loadPinyinPro(callback) {
 
     // Add pinyin to all Chinese characters on the page
 window.kizunaAddPinyin = function(btn) {
-    // Check if PinyinPro is available (should be loaded at init)
-    if (typeof window.PinyinPro === 'undefined') {
-        console.error('PinyinPro not loaded - please wait for initialization');
+    const pinyinLib = window.pinyinPro; // Create local reference
+    
+    if (!pinyinLib) {
+        console.error('PinyinPro library not found');
         return;
     }
 
     const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
     const textNodes = [];
 
-    // Collect all text nodes containing Chinese characters
     while (walk.nextNode()) {
         const node = walk.currentNode;
         if (/[一-龥]/.test(node.textContent)) {
@@ -395,19 +395,14 @@ window.kizunaAddPinyin = function(btn) {
 
     textNodes.forEach(node => {
         const parent = node.parentNode;
-
-        // Skip script/style tags to avoid breaking the page
         if (['SCRIPT', 'STYLE', 'NOSCRIPT'].includes(parent.tagName)) return;
 
-        // Create a span wrapper with pinyin
         const span = document.createElement('span');
-        span.innerHTML = window.PinyinPro.spell(node.textContent, { toneType: 'num' });
-
-        // Replace only the text node with the new span
+        span.innerHTML = pinyinLib.spell(node.textContent, { toneType: 'num' }); // Use local variable
         parent.replaceChild(span, node);
     });
 
-    console.log('Pinyin added safely to all Chinese characters');
+    console.log('Pinyin added successfully');
 };
     // Copy sandbox output to clipboard
     window.kizunaCopyOutput = function(btn) {
@@ -980,6 +975,7 @@ window.kizunaAddPinyin = function(btn) {
     // Start initialization
     init();
 })();
+
 
 
 
