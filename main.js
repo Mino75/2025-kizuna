@@ -112,10 +112,10 @@ function makeDraggable(el) {
 }
 
 
-// Load PinyinPro dynamically
+// Load pinyinPro dynamically
 function loadPinyinPro(callback) {
     // Avoid loading twice
-    if (window.PinyinPro) {
+    if (window.pinyinPro) {
         callback();
         return;
     }
@@ -128,18 +128,18 @@ function loadPinyinPro(callback) {
         : 'https://kizuna.kahiether.com/pinyin-pro@3.12.0.js';
     
     script.onload = () => {
-        console.log('PinyinPro loaded successfully');
+        console.log('pinyinPro loaded successfully');
         // Small delay to ensure the script is fully initialized
         setTimeout(() => {
-            if (callback && typeof window.PinyinPro !== 'undefined') {
+            if (callback && typeof window.pinyinPro !== 'undefined') {
                 callback();
             } else {
-                console.error('PinyinPro failed to initialize properly');
+                console.error('pinyinPro failed to initialize properly');
             }
         }, 100);
     };
     
-    script.onerror = () => console.error('Failed to load PinyinPro');
+    script.onerror = () => console.error('Failed to load pinyinPro');
     document.head.appendChild(script);
 }
 
@@ -379,7 +379,7 @@ window.kizunaAddPinyin = function(btn) {
     const pinyinLib = window.pinyinPro;
     
     if (!pinyinLib) {
-        console.error('PinyinPro library not found');
+        console.error('pinyinPro library not found');
         return;
     }
 
@@ -963,12 +963,12 @@ window.kizunaAddPinyin = function(btn) {
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => {
                 loadStyles();
-                loadPinyinPro(); // Load PinyinPro at startup
+                loadPinyinPro(); // Load pinyinPro at startup
                 setTimeout(createMenu, 100);
             });
         } else {
             loadStyles();
-            loadPinyinPro(); // Load PinyinPro at startup
+            loadPinyinPro(); // Load pinyinPro at startup
             setTimeout(createMenu, 100);
         }
     }
@@ -976,6 +976,7 @@ window.kizunaAddPinyin = function(btn) {
     // Start initialization
     init();
 })();
+
 
 
 
