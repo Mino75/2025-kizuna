@@ -114,7 +114,7 @@ function makeDraggable(el) {
 
 // Load PinyinPro dynamically
 function loadPinyinPro(callback) {
-        // Avoid loading twice
+    // Avoid loading twice
     if (window.PinyinPro) {
         callback();
         return;
@@ -124,7 +124,14 @@ function loadPinyinPro(callback) {
     script.src = '/pinyin-pro@3.12.0.js';
     script.onload = () => {
         console.log('PinyinPro loaded successfully');
-        if (callback) callback();
+        // Small delay to ensure the script is fully initialized
+        setTimeout(() => {
+            if (callback && typeof window.PinyinPro !== 'undefined') {
+                callback();
+            } else {
+                console.error('PinyinPro failed to initialize properly');
+            }
+        }, 100);
     };
     script.onerror = () => console.error('Failed to load PinyinPro');
     document.head.appendChild(script);
@@ -364,6 +371,13 @@ function loadPinyinPro(callback) {
     // Add pinyin to all Chinese characters on the page
     window.kizunaAddPinyin = function(btn) {
         loadPinyinPro(() => {
+
+            // Check if PinyinPro is actually available
+        if (typeof window.PinyinPro === 'undefined') {
+            console.error('PinyinPro not available after loading');
+            return;
+        }
+
             const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
             const textNodes = [];
     
@@ -962,6 +976,7 @@ function loadPinyinPro(callback) {
     // Start initialization
     init();
 })();
+
 
 
 
