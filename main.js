@@ -389,10 +389,10 @@ function makeDraggable(el) {
         const sandbox = document.createElement('div');
         sandbox.id = 'kizuna-js-sandbox';
         sandbox.innerHTML = `
-            <div class="kizuna--content">
+            <div class="kizuna-sandbox-content">
                 <h3>JavaScript </h3>
                 <textarea placeholder="Paste your JavaScript code here..." rows="10"></textarea>
-                <div class="kizuna--buttons">
+                <div class="kizuna-sandbox-buttons">
                     <button onclick="window.kizunaExecuteScript(this)">Execute</button>
                     <button onclick="window.kizunaClear(this)">Clear</button>
                     <button onclick="window.kizunaClose(this)">Close</button>
@@ -989,6 +989,7 @@ function makeDraggable(el) {
     // Start initialization
     init();
 })();
+
 
 
 
