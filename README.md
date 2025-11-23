@@ -15,7 +15,7 @@
 - [📄 License](#-license)
 
 ## 📖 About
-Kizuna (絆 - meaning "bond" in Japanese) is a powerful website enhancement service that adds interactive features to any website without modifying existing code. It provides a floating menu system with customizable features including auto-scrolling, interactive quizzes, JavaScript sandbox, privacy compliance tools, and comprehensive data management capabilities.
+Kizuna (絆 - meaning "bond" in Japanese) is a powerful website enhancement service that adds interactive features to any website without modifying existing code. It provides a floating menu system with customizable features including auto-scrolling, interactive quizzes, JavaScript sandbox, privacy compliance tools, Progressive Web App installation, and comprehensive data management capabilities.
 
 ## 🚀 Getting Started
 
@@ -55,24 +55,28 @@ NODE_ENV=production node server.js
 ```
 kizuna/
 ├── server.js              # Express server with parameter injection
-├── main.js                 # Core client-side functionality
-├── styles.js               # CSS styling and animations
+├── main.js                # Core client-side functionality
+├── styles.js              # CSS styling and animations
+├── pinyin-pro@3.12.0.js   # Pinyin library for Chinese characters
 ├── index.html              # Demo page and documentation
-├── package.json            # Dependencies and scripts
-├── dockerfile              # Docker configuration
-├── .gitignore              # Git ignore patterns
-├── LICENSE                 # MIT License
-└── .github/workflows/      # CI/CD automation
-    └── main.yml            # Docker Hub deployment
+├── package.json           # Dependencies and scripts
+├── dockerfile             # Docker configuration
+├── .gitignore             # Git ignore patterns
+├── LICENSE                # MIT License
+└── .github/workflows/     # CI/CD automation
+    └── main.yml           # Docker Hub deployment
 ```
 
 ## 🎯 Features
 
 ### 🎮 Core Features
 - **Floating Menu System**: Non-intrusive hamburger menu in bottom-right corner
+- **⏱️ Timer Widget**: Draggable timer/chronometer with countdown and stopwatch modes
+- **📱 PWA Installation**: Auto-detect and prompt for Progressive Web App installation
+- **🈯 Add Pinyin**: Automatically adds pinyin pronunciation to Chinese characters on the page
 - **Auto Scroll**: Intelligent scrolling with zoom awareness and speed control
 - **Interactive Quizzes**: Dynamic quiz generation from table data with timer support
-- **JavaScript Sandbox**: Safe code execution environment with output capture
+- **JavaScript Sandbox**: Safe code execution environment with output capture and pinyin support
 - **Privacy Compliance**: GDPR-compliant privacy popups and information display
 
 ### 🗑️ Data Management
@@ -88,17 +92,19 @@ kizuna/
 - **Responsive Design**: Mobile-friendly interface
 - **Zero Conflicts**: Scoped CSS that doesn't interfere with existing styles
 - **Smooth Animations**: CSS transitions and keyframe animations
+- **Draggable Components**: Timer widget can be positioned anywhere on screen
 - **Accessibility**: Proper contrast ratios and semantic markup
 
 ## 📚 Dependencies
 
 ### Runtime Dependencies
 - **Express**: `^4.18.2` - Web server framework for parameter injection
+- **pinyin-pro**: `3.12.0` - Chinese character pinyin conversion library
 
 ### Client-Side Features
-- **Vanilla JavaScript**: No external libraries required
+- **Vanilla JavaScript**: No external libraries required for core functionality
 - **Modern CSS**: CSS3 animations and flexbox layouts
-- **Web APIs**: FileReader, IndexedDB, Cache API, Service Workers
+- **Web APIs**: FileReader, IndexedDB, Cache API, Service Workers, PWA APIs
 
 ## 🐳 Docker Deployment
 
@@ -142,6 +148,26 @@ For quiz functionality, ensure your HTML contains a table with this structure:
 </table>
 ```
 
+### Timer Widget
+The timer feature provides:
+- **Timer Mode**: Set countdown in minutes
+- **Chrono Mode**: Stopwatch functionality
+- **Draggable Interface**: Position anywhere on screen
+- **Visual Display**: Large, clear time display
+
+### PWA Installation
+Kizuna automatically detects PWA-capable websites and:
+- **Auto-prompts**: Shows installation popup after 2 seconds
+- **Manual Install**: Available via menu button
+- **Smart Detection**: Checks for manifest and installability
+
+### Chinese Language Support
+The "Add Pinyin" feature:
+- **Auto-detection**: Finds all Chinese characters on page
+- **Inline Addition**: Adds pinyin next to characters
+- **Preserves HTML**: Maintains original page structure
+- **Tone Numbers**: Shows tones as numbers (1-4)
+
 ## ⚙️ Configuration
 
 ### URL Parameters
@@ -169,6 +195,7 @@ Supports both hyphenated and camelCase formats:
 - **`GET /`** - Demo page with live Kizuna features
 - **`GET /main.js`** - Injection script with parameter processing
 - **`GET /styles.js`** - CSS styles and animations
+- **`GET /pinyin-pro@3.12.0.js`** - Pinyin conversion library
 - **`GET /health`** - Service health check with metrics
 - **`GET /test`** - Parameter validation and testing
 
@@ -186,27 +213,47 @@ Supports both hyphenated and camelCase formats:
 
 ## 🌐 Integration Examples
 
-### E-learning Platform
+### E-learning Platform with Chinese Support
 ```html
 <script defer src="https://kizuna.kahiether.com/main.js?website-url=https://mylearningsite.com&personalinfostored=yes&enablemdquizz=yes&enablejssandbox=yes&enableprivacy=yes"></script>
 ```
+Perfect for language learning sites with Chinese content.
 
 ### Corporate Website
 ```html
 <script defer src="https://kizuna.kahiether.com/main.js?website-url=https://company.com&personalinfostored=no&enablemdquizz=no&enablejssandbox=no&enableprivacy=yes"></script>
 ```
+Minimal features for professional environments.
 
 ### Documentation Site
 ```html
 <script defer src="https://kizuna.kahiether.com/main.js?website-url=https://docs.example.com&personalinfostored=no&enablemdquizz=no&enablejssandbox=yes&enableprivacy=no"></script>
 ```
+Code sandbox for interactive documentation.
 
 ### Features Always Available
 Regardless of configuration, these features are always enabled:
+- **Timer**: Countdown and stopwatch functionality
+- **PWA Install**: Progressive Web App installation
 - **Auto Scroll**: Start/stop scrolling functionality
 - **Clear All Data**: Complete local data management
 - **Reload Page**: Quick page refresh
+- **Add Pinyin**: Chinese character support
 - **Kahiether Link**: Link to service provider
+
+## 🔐 Privacy & Security
+
+### Data Handling
+- **No Server Storage**: All data remains in user's browser
+- **GDPR Compliant**: Full privacy disclosure and user control
+- **Secure Sandbox**: JavaScript execution in isolated context
+- **User Consent**: Clear warnings before data operations
+
+### Browser Compatibility
+- Chrome/Edge 90+
+- Firefox 88+
+- Safari 14+
+- Mobile browsers with ES6 support
 
 ## 📄 License
 MIT License - see LICENSE file for details.
