@@ -298,7 +298,9 @@ window.applyKizunaStyles = function() {
             cursor: pointer;
             font-size: 14px;
             font-family: Arial, sans-serif;
-            transition: all 0.3s ease;
+            transition: all 0.3s ease;         
+            user-select: none;
+            -webkit-user-select: none;
         }
 
         .kizuna-sandbox-buttons button:first-child {
@@ -317,6 +319,19 @@ window.applyKizunaStyles = function() {
 
         .kizuna-sandbox-buttons button:not(:first-child):hover {
             background-color: #f8f9fa;
+        }
+
+        .kizuna-sandbox-buttons button:active {
+            transform: scale(0.95);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .kizuna-sandbox-buttons button:first-child:active {
+            background-color: #004085;
+        }
+        
+        .kizuna-sandbox-buttons button:not(:first-child):active {
+            background-color: #e9ecef;
         }
 
         .kizuna-sandbox-output {
@@ -576,4 +591,5 @@ window.applyKizunaStyles = function() {
 
     console.log('Kizuna styles applied successfully');
 };
+
 
