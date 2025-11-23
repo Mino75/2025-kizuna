@@ -379,29 +379,57 @@ function makeDraggable(el) {
         document.body.appendChild(popup);
     }
 
-    // JavaScript sandbox
+    // JavaScript 
     function createJsSandbox() {
-        if (!CONFIG.enableJsSandbox) return null;
+        if (!CONFIG.enableJs) return null;
         
-        const existing = document.getElementById('kizuna-js-sandbox');
+        const existing = document.getElementById('kizuna-js-');
         if (existing) existing.remove();
         
-        const sandbox = document.createElement('div');
-        sandbox.id = 'kizuna-js-sandbox';
-        sandbox.innerHTML = `
-            <div class="kizuna-sandbox-content">
-                <h3>JavaScript Sandbox</h3>
+        const  = document.createElement('div');
+        .id = 'kizuna-js-';
+        .innerHTML = `
+            <div class="kizuna--content">
+                <h3>JavaScript </h3>
                 <textarea placeholder="Paste your JavaScript code here..." rows="10"></textarea>
-                <div class="kizuna-sandbox-buttons">
+                <div class="kizuna--buttons">
                     <button onclick="window.kizunaExecuteScript(this)">Execute</button>
-                    <button onclick="window.kizunaClearSandbox(this)">Clear</button>
-                    <button onclick="window.kizunaCloseSandbox(this)">Close</button>
+                    <button onclick="window.kizunaClear(this)">Clear</button>
+                    <button onclick="window.kizunaClose(this)">Close</button>
+                    <button onclick="window.kizunaAddPinyin(this)">Add Pinyin</button>
+                    <button onclick="window.kizunaCopyOutput(this)">Copy Console Output</button>
                 </div>
-                <div class="kizuna-sandbox-output"></div>
+                <div class="kizuna--output"></div>
             </div>
         `;
         return sandbox;
     }
+
+
+    // Add pinyin to all Chinese characters on the page
+    window.kizunaAddPinyin = function(btn) {
+        loadPinyinPro(() => {
+            const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+            while (walk.nextNode()) {
+                const node = walk.currentNode;
+                if (/[一-龥]/.test(node.textContent)) { // contains Chinese
+                    node.parentNode.innerHTML = PinyinPro.spell(node.textContent, { toneType: 'num' });
+                }
+            }
+            console.log('Pinyin added to all Chinese characters');
+        });
+    };
+    
+    // Copy sandbox output to clipboard
+    window.kizunaCopyOutput = function(btn) {
+        const sandbox = btn.closest('#kizuna-js-');
+        const outputDiv = sandbox.querySelector('.kizuna--output');
+        if (!outputDiv) return;
+        navigator.clipboard.writeText(outputDiv.innerText)
+            .then(() => console.log('Sandbox output copied to clipboard'))
+            .catch(err => console.error('Copy failed:', err));
+    };
+
 
     // Sandbox functions (global for onclick handlers)
     window.kizunaExecuteScript = function(btn) {
@@ -961,6 +989,7 @@ function makeDraggable(el) {
     // Start initialization
     init();
 })();
+
 
 
 
