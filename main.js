@@ -26,28 +26,6 @@ window.addEventListener('beforeinstallprompt', e => {
 function spawnTimer() {
   const timerBox = document.createElement('div');
   timerBox.className = 'kizuna-timer-box';
-  timerBox.style.cssText = `
-    position: fixed;
-    top: 100px;
-    left: 100px;
-    width: 220px;
-    min-height: 230px;
-    background: #0b0b0b;
-    color: #ffffff;
-    border: 2px solid #007bff;
-    border-radius: 10px;
-    box-shadow: 0 0 12px rgba(0,123,255,0.5);
-    padding: 10px;
-    z-index: 9999;
-    resize: both;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    font-family: system-ui, sans-serif;
-    box-sizing: border-box;
-    user-select: none;
-  `;
 
   timerBox.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
@@ -134,7 +112,17 @@ function makeDraggable(el) {
 }
 
 
-
+// Load PinyinPro dynamically
+function loadPinyinPro(callback) {
+    const script = document.createElement('script');
+    script.src = '/pinyinPro.js';
+    script.onload = () => {
+        console.log('PinyinPro loaded successfully');
+        if (callback) callback();
+    };
+    script.onerror = () => console.error('Failed to load PinyinPro');
+    document.head.appendChild(script);
+}
 
 
 
@@ -320,45 +308,6 @@ function makeDraggable(el) {
         const popup = document.createElement('div');
         popup.id = 'kizuna-privacy-popup';
         popup.innerHTML = `
-             <style>
-                    #kizuna-privacy-popup {
-                        background-color: #f8f9fa !important;
-                        color: #007bff !important;
-                    }
-                    #kizuna-privacy-popup * {
-                        background-color: transparent !important;
-                        color: #007bff !important;
-                    }
-                    #kizuna-privacy-popup .kizuna-privacy-content {
-                        background-color: #f8f9fa !important;
-                        color: #007bff !important;
-                    }
-                    #kizuna-privacy-popup .kizuna-privacy-content h3 {
-                        background-color: transparent !important;
-                        color: #007bff !important;
-                    }
-                    #kizuna-privacy-popup .kizuna-privacy-content p {
-                        background-color: transparent !important;
-                        color: #007bff !important;
-                    }
-                    #kizuna-privacy-popup .kizuna-privacy-content strong {
-                        background-color: transparent !important;
-                        color: #007bff !important;
-                        font-weight: bold;
-                    }
-                    #kizuna-privacy-popup .kizuna-privacy-buttons button {
-                        background-color: #007bff !important;
-                        color: #f8f9fa !important;
-                        border: 1px solid #007bff !important;
-                        padding: 8px 16px !important;
-                        cursor: pointer !important;
-                        border-radius: 4px !important;
-                    }
-                    #kizuna-privacy-popup .kizuna-privacy-buttons button:hover {
-                        background-color: #0056b3 !important;
-                        color: #ffffff !important;
-                    }
-                </style>
         
             <div class="kizuna-privacy-content">
                 <h3>Privacy & GDPR Compliance</h3>
@@ -989,6 +938,7 @@ function makeDraggable(el) {
     // Start initialization
     init();
 })();
+
 
 
 
