@@ -366,12 +366,43 @@ function loadPinyinPro(callback) {
                     <button onclick="window.kizunaCloseSandbox(this)">Close</button>
                     <button onclick="window.kizunaAddPinyin(this)">Add Pinyin</button>
                     <button onclick="window.kizunaCopyOutput(this)">Copy Console Output</button>
+                    <button onclick="window.kizunaExploreIndexedDB(this)">Explore IndexedDB</button>
                 </div>
                 <div class="kizuna-sandbox-output"></div>
             </div>
         `;
         return sandbox;
     }
+
+
+// Global function for IndexedDB exploration
+window.kizunaExploreIndexedDB = async function(btn) {
+    try {
+        const dbs = await indexedDB.databases();
+        const result = {};
+        for (const dbInfo of dbs) {
+            const dbName = dbInfo.name;
+            result[dbName] = {};
+            const req = indexedDB.open(dbName);
+            await new Promise(resolve => {
+                req.onsuccess = () => {
+                    const db = req.result;
+                    for (const storeName of db.objectStoreNames) {
+                        const tx = db.transaction(storeName, 'readonly');
+                        const store = tx.objectStore(storeName);
+                        const allReq = store.getAll();
+                        allReq.onsuccess = () => { result[dbName][storeName] = allReq.result; };
+                    }
+                    db.close();
+                    resolve();
+                };
+            });
+        }
+        showModal(JSON.stringify(result, null, 2));
+    } catch (err) {
+        showModal('Error reading IndexedDB: ' + err.message);
+    }
+};
 
 
     // Add pinyin to all Chinese characters on the page
@@ -987,6 +1018,7 @@ window.kizunaAddPinyin = function(btn) {
     // Start initialization
     init();
 })();
+
 
 
 
