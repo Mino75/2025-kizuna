@@ -320,6 +320,34 @@ function loadPinyinPro(callback) {
         if (popup) popup.remove();
     };
 
+// SHOW Modal used for indexed db check
+function showModal(content) {
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        position:fixed;
+        top:50%;left:50%;
+        transform:translate(-50%,-50%);
+        max-height:80%;
+        width:80%;
+        overflow:auto;
+        background:#111;
+        color:#0f0;
+        font-family:monospace;
+        border:1px solid #0f0;
+        padding:16px;
+        z-index:100000;
+    `;
+
+    modal.innerHTML = `
+        <button style="margin-bottom:10px" onclick="this.parentNode.remove()">Close</button>
+        <pre>${content}</pre>
+    `;
+
+    document.body.appendChild(modal);
+}
+
+
+
     // Privacy popup
     function showPrivacyPopup() {
         if (!CONFIG.enablePrivacy) return;
@@ -1018,6 +1046,7 @@ window.kizunaAddPinyin = function(btn) {
     // Start initialization
     init();
 })();
+
 
 
 
