@@ -26,36 +26,67 @@ const MENU_LABELS = {
 const KIZUNA_ANIMALS = ["🦖","🐅","🦘","🦘","🦙","🦕","🐠","🐢","🐤","🐧"];
 
 // Right → Left with random "jump arcs" along the way
-function runAnimalEmoji(fromEl /* optional: burger element */) {
+function runAnimalEmoji(fromEl) {
+  // ====== TUNING (edit only here) ======
+  const CFG = {
+    speedMultiplier: 4,        // 2 = twice slower
+    fontSizeMin: 38,
+    fontSizeMax: 55,
+
+    // Align to burger (center). Adjust if you want the emoji slightly above/below burger.
+    yOffsetPx: 0,
+
+    // Jumps
+    minHops: 1,
+    maxHops: 3,
+    jumpHeightMinPx: 25,
+    jumpHeightMaxPx: 30,
+
+    // Offscreen margins
+    spawnMarginPx: 80,
+    exitMarginPx: 120,
+
+    zIndex: 1000000,
+  };
+  // ====================================
+
+  const rect = fromEl?.getBoundingClientRect?.();
+  if (!rect) return;
+
   const emoji = KIZUNA_ANIMALS[Math.floor(Math.random() * KIZUNA_ANIMALS.length)];
+  const size =
+    Math.floor(Math.random() * (CFG.fontSizeMax - CFG.fontSizeMin + 1)) + CFG.fontSizeMin;
+
+  const baseDuration = Math.floor(Math.random() * 900) + 1400; // 1400..2300
+  const duration = Math.floor(baseDuration * CFG.speedMultiplier);
+
+  // ✅ Use document coordinates (avoids "fixed inside transformed ancestor" issues)
+  const pageY = window.scrollY + rect.top + rect.height / 2 + CFG.yOffsetPx;
+  const topPx = Math.round(pageY - size / 2);
 
   const el = document.createElement("div");
   el.textContent = emoji;
-
-  // Fixed Y = burger's vertical position (center)
-  const rect = fromEl?.getBoundingClientRect?.();
-  const yPx = rect ? (rect.top + rect.height / 2) : 80; // fallback
-
-  const size = Math.floor(Math.random() * 18) + 38; // 38..55px
-  const duration = Math.floor((Math.random() * 900) + 1400) * 2; // ✅ 2x slower
-
   el.style.cssText = `
-    position: fixed;
-    top: ${yPx}px;                 /* ✅ single height: burger position */
-    right: -4rem;
-    transform: translate3d(0,0,0);
+    position: absolute;
+    top: ${topPx}px;
+    left: ${Math.round(window.scrollX + window.innerWidth + CFG.spawnMarginPx)}px;
     font-size: ${size}px;
+    line-height: 1;
     pointer-events: none;
-    z-index: 1000000;
+    z-index: ${CFG.zIndex};
     will-change: transform;
+    transform: translate3d(0,0,0);
   `;
 
   document.body.appendChild(el);
 
-  const travelX = -(window.innerWidth + 200); // off-screen left
+  // Travel distance from spawn point to fully off-screen left
+  const travelX = -(window.innerWidth + CFG.spawnMarginPx + CFG.exitMarginPx);
 
-  // Hops: y goes up/down, but baseline stays fixed at burger height
-  const hopCount = Math.floor(Math.random() * 4) + 2; // 2..5 hops
+  // --- Build jump windows (random intervals) ---
+  const hopCount =
+    Math.floor(Math.random() * (CFG.maxHops - CFG.minHops + 1)) + CFG.minHops;
+
   const hopWindows = [];
   let cursor = 0.10;
 
@@ -68,7 +99,8 @@ function runAnimalEmoji(fromEl /* optional: burger element */) {
     cursor += hopDur;
   }
 
-  const hopAmp = () => (Math.random() * 55 + 25); // 25..80px
+  const hopAmp = () =>
+    Math.random() * (CFG.jumpHeightMaxPx - CFG.jumpHeightMinPx) + CFG.jumpHeightMinPx;
 
   const keyframes = [
     { offset: 0,    transform: `translate3d(0px, 0px, 0) rotate(0deg)` },
@@ -89,12 +121,7 @@ function runAnimalEmoji(fromEl /* optional: burger element */) {
   keyframes.push({ offset: 1, transform: `translate3d(${travelX}px, 0px, 0) rotate(0deg)` });
   keyframes.sort((a, b) => a.offset - b.offset);
 
-  const anim = el.animate(keyframes, {
-    duration,
-    easing: "linear",
-    fill: "forwards",
-  });
-
+  const anim = el.animate(keyframes, { duration, easing: "linear", fill: "forwards" });
   anim.onfinish = () => el.remove();
 }
 
@@ -1152,6 +1179,7 @@ window.kizunaAddPinyin = function(btn) {
     // Start initialization
     init();
 })();
+
 
 
 
