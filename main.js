@@ -8,7 +8,24 @@ window.addEventListener('beforeinstallprompt', e => {
   console.log('PWA install prompt captured early');
 });
 
-    
+
+const MENU_LABELS = {
+  timer: "⏱️ Timer",
+  install: "📲 INSTALL",
+  reload: "🔄 Reload Page",
+  kahiether: "🌐 Kahiether",
+  startScroll: "⬇️ Start Scroll",
+  stopScroll: "⛔ Stop Scroll",
+  beginnerQuiz: "🧩 Beginner Quiz",
+  advancedQuiz: "🚀 Advanced Quiz",
+  sandbox: "🧪 JS Sandbox",
+  privacy: "🛡️ Privacy Info",
+  clearData: "🗑️ Clear All Data",
+};
+
+function setMenuLabel(btn, key) {
+  btn.textContent = MENU_LABELS[key] || btn.textContent; // fallback 
+}
     
     // Configuration from server injection - NO QUOTES around placeholders!
     const CONFIG = {
@@ -799,6 +816,7 @@ window.kizunaAddPinyin = function(btn) {
         // Add Timer button
         const timerBtn = document.createElement('button');
         timerBtn.textContent = 'Timer';
+        setMenuLabel(timerBtn, 'timer'); 
         timerBtn.className = 'kizuna-menu-button';
         timerBtn.addEventListener('click', () => {
             spawnTimer();
@@ -810,6 +828,7 @@ window.kizunaAddPinyin = function(btn) {
         
         const installBtn = document.createElement('button');
         installBtn.textContent = 'INSTALL';
+        setMenuLabel(installBtn, 'install');
         installBtn.className = 'kizuna-menu-button';
         installBtn.addEventListener('click', async () => {
             if (window.matchMedia('(display-mode: standalone)').matches) {
@@ -831,6 +850,7 @@ window.kizunaAddPinyin = function(btn) {
         // Reload current page
         const reloadBtn = document.createElement('button');
         reloadBtn.textContent = 'Reload Page';
+        setMenuLabel(reloadBtn, 'reload');
         reloadBtn.className = 'kizuna-menu-button';
         reloadBtn.addEventListener('click', () => {
           window.location.reload(); // soft reload; use location.replace(location.href) for a "harder" refresh
@@ -841,6 +861,7 @@ window.kizunaAddPinyin = function(btn) {
         // About → kahiether.com
         const aboutBtn = document.createElement('button');
         aboutBtn.textContent = 'Kahiether';
+        setMenuLabel(aboutBtn, 'kahiether');
         aboutBtn.className = 'kizuna-menu-button';
         aboutBtn.addEventListener('click', () => {
           // Open in same tab:
@@ -857,6 +878,7 @@ window.kizunaAddPinyin = function(btn) {
         // Always add scroll buttons
         const startScrollBtn = document.createElement('button');
         startScrollBtn.textContent = 'Start Scroll';
+        setMenuLabel(startScrollBtn, 'startScroll');
         startScrollBtn.className = 'kizuna-menu-button';
         startScrollBtn.addEventListener('click', () => {
             zoomAwareScroll(50);
@@ -865,6 +887,7 @@ window.kizunaAddPinyin = function(btn) {
 
         const stopScrollBtn = document.createElement('button');
         stopScrollBtn.textContent = 'Stop Scroll';
+        setMenuLabel(stopScrollBtn, 'stopScroll');
         stopScrollBtn.className = 'kizuna-menu-button';
         stopScrollBtn.addEventListener('click', () => {
             if (window.stopScroll) window.stopScroll();
@@ -880,6 +903,7 @@ window.kizunaAddPinyin = function(btn) {
             
             const beginnerQuizBtn = document.createElement('button');
             beginnerQuizBtn.textContent = 'Beginner Quiz';
+            setMenuLabel(beginnerQuizBtn, 'beginnerQuiz');
             beginnerQuizBtn.className = 'kizuna-menu-button';
             beginnerQuizBtn.addEventListener('click', () => {
                 startQuiz(false);
@@ -888,6 +912,7 @@ window.kizunaAddPinyin = function(btn) {
             
             const advancedQuizBtn = document.createElement('button');
             advancedQuizBtn.textContent = 'Advanced Quiz';
+            setMenuLabel(advancedQuizBtn, 'advancedQuiz');
             advancedQuizBtn.className = 'kizuna-menu-button';
             advancedQuizBtn.addEventListener('click', () => {
                 startQuiz(true);
@@ -903,6 +928,7 @@ window.kizunaAddPinyin = function(btn) {
             console.log('JS Sandbox feature enabled');
             const sandboxBtn = document.createElement('button');
             sandboxBtn.textContent = 'JS Sandbox';
+            setMenuLabel(sandboxBtn, 'sandbox');
             sandboxBtn.className = 'kizuna-menu-button';
             sandboxBtn.addEventListener('click', () => {
                 const sandbox = createJsSandbox();
@@ -917,6 +943,7 @@ window.kizunaAddPinyin = function(btn) {
             console.log('Privacy feature enabled');
             const privacyBtn = document.createElement('button');
             privacyBtn.textContent = 'Privacy Info';
+            setMenuLabel(privacyBtn, 'privacy');
             privacyBtn.className = 'kizuna-menu-button';
             privacyBtn.addEventListener('click', () => {
                 showPrivacyPopup();
@@ -1007,6 +1034,7 @@ window.kizunaAddPinyin = function(btn) {
         // ALWAYS add Clear All Data button (new feature)
         const clearDataBtn = document.createElement('button');
         clearDataBtn.textContent = 'Clear All Data';
+        setMenuLabel(clearDataBtn, 'clearData');
         clearDataBtn.className = 'kizuna-menu-button kizuna-clear-data-button';
         clearDataBtn.addEventListener('click', () => {
             showClearDataConfirmation();
@@ -1046,6 +1074,7 @@ window.kizunaAddPinyin = function(btn) {
     // Start initialization
     init();
 })();
+
 
 
 
