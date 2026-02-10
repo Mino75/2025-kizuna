@@ -26,58 +26,58 @@ const MENU_LABELS = {
 const KIZUNA_ANIMALS = ["🦖","🐅","🦘","🦘","🦙","🦕","🐠","🐢","🐤","🐧"];
 
 // Right → Left with random "jump arcs" along the way
-function runAnimalEmoji() {
+function runAnimalEmoji(fromEl /* optional: burger element */) {
   const emoji = KIZUNA_ANIMALS[Math.floor(Math.random() * KIZUNA_ANIMALS.length)];
 
   const el = document.createElement("div");
   el.textContent = emoji;
 
+  // Fixed Y = burger's vertical position (center)
+  const rect = fromEl?.getBoundingClientRect?.();
+  const yPx = rect ? (rect.top + rect.height / 2) : 80; // fallback
+
   const size = Math.floor(Math.random() * 18) + 38; // 38..55px
-  const topVh = Math.random() * 75 + 10;            // 10..85vh
-  const duration = Math.floor(Math.random() * 900) + 1400; // 1400..2300ms
+  const duration = Math.floor((Math.random() * 900) + 1400) * 2; // ✅ 2x slower
 
   el.style.cssText = `
     position: fixed;
-    top: ${topVh}vh;
+    top: ${yPx}px;                 /* ✅ single height: burger position */
     right: -4rem;
+    transform: translate3d(0,0,0);
     font-size: ${size}px;
     pointer-events: none;
     z-index: 1000000;
     will-change: transform;
-    transform: translate3d(0,0,0);
   `;
 
   document.body.appendChild(el);
 
   const travelX = -(window.innerWidth + 200); // off-screen left
 
-  // --- Build keyframes with random jump arcs ---
-  // We create a timeline from 0..1. Between hops: baseline. During a hop: up then down.
+  // Hops: y goes up/down, but baseline stays fixed at burger height
   const hopCount = Math.floor(Math.random() * 4) + 2; // 2..5 hops
   const hopWindows = [];
-  let cursor = 0.10; // leave a bit at start
+  let cursor = 0.10;
 
   for (let i = 0; i < hopCount; i++) {
-    const gap = Math.random() * 0.12 + 0.06;      // 0.06..0.18 (time between hop starts)
-    const hopDur = Math.random() * 0.12 + 0.08;   // 0.08..0.20 (hop window size)
+    const gap = Math.random() * 0.12 + 0.06;
+    const hopDur = Math.random() * 0.12 + 0.08;
     cursor += gap;
     if (cursor + hopDur > 0.95) break;
     hopWindows.push({ start: cursor, mid: cursor + hopDur / 2, end: cursor + hopDur });
     cursor += hopDur;
   }
 
-  const hopAmp = () => (Math.random() * 55 + 25); // 25..80px jump height
+  const hopAmp = () => (Math.random() * 55 + 25); // 25..80px
 
-  // Base keyframes
   const keyframes = [
-    { offset: 0,   transform: `translate3d(0px, 0px, 0) rotate(0deg)` },
-    { offset: 0.05,transform: `translate3d(${travelX * 0.05}px, 0px, 0) rotate(0deg)` },
+    { offset: 0,    transform: `translate3d(0px, 0px, 0) rotate(0deg)` },
+    { offset: 0.05, transform: `translate3d(${travelX * 0.05}px, 0px, 0) rotate(0deg)` },
   ];
 
-  // Add hops along the path
   for (const w of hopWindows) {
     const amp = hopAmp();
-    const rot = (Math.random() * 18 - 9).toFixed(1); // -9..+9 deg
+    const rot = (Math.random() * 18 - 9).toFixed(1);
 
     keyframes.push(
       { offset: w.start, transform: `translate3d(${travelX * w.start}px, 0px, 0) rotate(${rot}deg)` },
@@ -86,12 +86,7 @@ function runAnimalEmoji() {
     );
   }
 
-  // End
-  keyframes.push(
-    { offset: 1, transform: `translate3d(${travelX}px, 0px, 0) rotate(0deg)` }
-  );
-
-  // Sort by offset (important because we appended hops)
+  keyframes.push({ offset: 1, transform: `translate3d(${travelX}px, 0px, 0) rotate(0deg)` });
   keyframes.sort((a, b) => a.offset - b.offset);
 
   const anim = el.animate(keyframes, {
@@ -103,8 +98,7 @@ function runAnimalEmoji() {
   anim.onfinish = () => el.remove();
 }
 
-
-
+// Set Menu
     
 function setMenuLabel(btn, key) {
   btn.textContent = MENU_LABELS[key] || btn.textContent; // fallback 
@@ -1158,6 +1152,7 @@ window.kizunaAddPinyin = function(btn) {
     // Start initialization
     init();
 })();
+
 
 
 
