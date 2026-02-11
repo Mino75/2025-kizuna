@@ -33,6 +33,10 @@ function runAnimalEmoji(fromEl) {
     fontSizeMin: 38,
     fontSizeMax: 55,
 
+    // If burger is anchored bottom/right, these mirror its CSS values:
+    burgerBottomPx: 20,
+    burgerRightPx: 20,
+      
     // Align to burger (center). Adjust if you want the emoji slightly above/below burger.
     yOffsetPx: 0,
 
@@ -50,26 +54,30 @@ function runAnimalEmoji(fromEl) {
   };
   // ====================================
 
-  const rect = fromEl?.getBoundingClientRect?.();
-  if (!rect) return;
-
+ 
   const emoji = KIZUNA_ANIMALS[Math.floor(Math.random() * KIZUNA_ANIMALS.length)];
   const size =
     Math.floor(Math.random() * (CFG.fontSizeMax - CFG.fontSizeMin + 1)) + CFG.fontSizeMin;
 
-  const baseDuration = Math.floor(Math.random() * 900) + 1400; // 1400..2300
+  const baseDuration = Math.floor(Math.random() * 900) + 1400;
   const duration = Math.floor(baseDuration * CFG.speedMultiplier);
 
-  // ✅ Use document coordinates (avoids "fixed inside transformed ancestor" issues)
-  const pageY = window.scrollY + rect.top + rect.height / 2 + CFG.yOffsetPx;
-  const topPx = Math.round(pageY - size / 2);
+  // Use burger dimensions if available (helps centering)
+  const rect = fromEl?.getBoundingClientRect?.();
+  const burgerH = rect?.height ?? 44;
+
+  // ✅ Stable Y derived from bottom anchoring (viewport space)
+  const yPx =
+    window.innerHeight - CFG.burgerBottomPx - burgerH / 2 + CFG.yOffsetPx;
 
   const el = document.createElement("div");
   el.textContent = emoji;
+
+  // Start off-screen right in viewport space
   el.style.cssText = `
-    position: absolute;
-    top: ${topPx}px;
-    left: ${Math.round(window.scrollX + window.innerWidth + CFG.spawnMarginPx)}px;
+    position: fixed;
+    top: ${Math.round(yPx - size / 2)}px;
+    left: ${Math.round(window.innerWidth + CFG.spawnMarginPx)}px;
     font-size: ${size}px;
     line-height: 1;
     pointer-events: none;
@@ -80,10 +88,9 @@ function runAnimalEmoji(fromEl) {
 
   document.body.appendChild(el);
 
-  // Travel distance from spawn point to fully off-screen left
   const travelX = -(window.innerWidth + CFG.spawnMarginPx + CFG.exitMarginPx);
 
-  // --- Build jump windows (random intervals) ---
+  // --- Random hop windows ---
   const hopCount =
     Math.floor(Math.random() * (CFG.maxHops - CFG.minHops + 1)) + CFG.minHops;
 
@@ -124,7 +131,6 @@ function runAnimalEmoji(fromEl) {
   const anim = el.animate(keyframes, { duration, easing: "linear", fill: "forwards" });
   anim.onfinish = () => el.remove();
 }
-
 // Set Menu
     
 function setMenuLabel(btn, key) {
@@ -1179,6 +1185,7 @@ window.kizunaAddPinyin = function(btn) {
     // Start initialization
     init();
 })();
+
 
 
 
