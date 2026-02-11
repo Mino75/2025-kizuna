@@ -29,7 +29,7 @@ const KIZUNA_ANIMALS = ["🦖","🐅","🦘","🦘","🦙","🦕","🐠","🐢",
 function runAnimalEmoji(fromEl) {
   // ====== TUNING (edit only here) ======
   const CFG = {
-    speedMultiplier: 4,        // 2 = twice slower
+    speedMultiplier: 3,        // 2 = twice slower
     fontSizeMin: 38,
     fontSizeMax: 55,
 
@@ -1185,6 +1185,7 @@ window.kizunaAddPinyin = function(btn) {
     // Start initialization
     init();
 })();
+
 
 
 
