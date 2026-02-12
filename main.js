@@ -9,21 +9,24 @@ window.addEventListener('beforeinstallprompt', e => {
 });
 
 
+
+
+    
 const MENU_LABELS = {
-  timer: "⏱️ Timer",
+  timer: "⏱️ TIMER",
   install: "📲 INSTALL",
-  reload: "🔄 Reload Page",
-  kahiether: "🌐 Kahiether",
-  startScroll: "⬇️ Start Scroll",
-  stopScroll: "⛔ Stop Scroll",
-  beginnerQuiz: "🧩 Beginner Quiz",
-  advancedQuiz: "🚀 Advanced Quiz",
-  sandbox: "🧪 JS Sandbox",
-  privacy: "🛡️ Privacy Info",
-  clearData: "🗑️ Clear All Data",
+  reload: "🔄 RELOAD",
+  kahiether: "🌐 KAHIETHER.COM",
+  startScroll: "⬇️ SCROLL DOWN",
+  stopScroll: "⛔ STOP SCROLL",
+  beginnerQuiz: "🧩 SIMPLE QUIZZ",
+advancedQuiz: "🚀 ADVANCED QUIZZ",
+  sandbox: "🧪 JS SANDBOX",
+  privacy: "🛡️ PRIVACY INFO",
+  clearData: "🗑️ CLEAR ALL DATA",
 };
 
-const KIZUNA_ANIMALS = ["🦖","🐅","🦘","🦘","🦙","🦕","🐠","🐢","🐤","🐧"];
+const KIZUNA_ANIMALS = ["🦖","🐅","🐦","🦘","🐆","🐝","🦌","🐳","🦙","🦕","🐠","🐢","🐤","🐧"];
 
 // Right → Left with random "jump arcs" along the way
 function runAnimalEmoji(fromEl) {
@@ -515,15 +518,15 @@ function showModal(content) {
             <div class="kizuna-sandbox-content">
                 <h3>JavaScript </h3>
                 <textarea placeholder="Paste your JavaScript code here..." rows="10"></textarea>
-                <div class="kizuna-sandbox-buttons">
-                    <button onclick="window.kizunaExecuteScript(this)">Execute</button>
-                    <button onclick="window.kizunaClearSandbox(this)">Clear</button>
-                    <button onclick="window.kizunaCloseSandbox(this)">Close</button>
-                    <button onclick="window.kizunaAddPinyin(this)">Add Pinyin</button>
-                    <button onclick="window.kizunaCopyOutput(this)">Copy Console Output</button>
-                    <button onclick="window.kizunaExploreIndexedDB(this)">Explore IndexedDB</button>
-                </div>
-                <div class="kizuna-sandbox-output"></div>
+                    <div class="kizuna-sandbox-buttons">
+                      <button id="kizuna-sbx-exec"  onclick="window.kizunaExecuteScript(this)">Execute</button>
+                      <button id="kizuna-sbx-clear" onclick="window.kizunaClearSandbox(this)">Clear</button>
+                      <button id="kizuna-sbx-close" onclick="window.kizunaCloseSandbox(this)">Close</button>
+                      <button id="kizuna-sbx-pinyin" onclick="window.kizunaAddPinyin(this)">Add Pinyin</button>
+                      <button id="kizuna-sbx-copy" onclick="window.kizunaCopyOutput(this)">Copy Console Output</button>
+                      <button id="kizuna-sbx-idb"   onclick="window.kizunaExploreIndexedDB(this)">Explore IndexedDB</button>
+                    </div>
+                                    <div class="kizuna-sandbox-output"></div>
             </div>
         `;
         return sandbox;
@@ -1182,9 +1185,277 @@ window.kizunaAddPinyin = function(btn) {
         }
     }
 
+
+
+
+// ===== KIZUNA FUNCTION-CALLING BRIDGE (stable IDs, no arming) =====
+(function initKizunaFunctionCalling() {
+  function kizuna_state() {
+    return {
+      features: {
+        mdQuiz: !!CONFIG.enableMdQuizz,
+        jsSandbox: !!CONFIG.enableJsSandbox,
+        privacy: !!CONFIG.enablePrivacy
+      },
+      pwa: {
+        isStandalone: window.matchMedia("(display-mode: standalone)").matches,
+        hasInstallPrompt: !!deferredPrompt
+      },
+      ui: {
+        hasQuiz: !!document.getElementById("kizuna-quiz-container"),
+        hasSandbox: !!document.getElementById("kizuna-js-sandbox"),
+        canStopScroll: typeof window.stopScroll === "function"
+      }
+    };
+  }
+
+  function requireSandboxOpen() {
+    const sandbox = document.getElementById("kizuna-js-sandbox");
+    if (!sandbox) throw new Error("Sandbox not open");
+    return sandbox;
+  }
+
+  function btnById(id) {
+    const el = document.getElementById(id);
+    if (!el) throw new Error(`Button not found: ${id}`);
+    return el;
+  }
+
+  const TOOLS = {
+    "timer.open": {
+      description: "Open the timer/chrono widget",
+      parameters: { type: "object", properties: {}, additionalProperties: false },
+      handler: async () => {
+        spawnTimer();
+        return { opened: true };
+      }
+    },
+
+    "scroll.start": {
+      description: "Start auto-scrolling down the page",
+      parameters: {
+        type: "object",
+        properties: { speedMs: { type: "number" } },
+        additionalProperties: false
+      },
+      handler: async (args) => {
+        zoomAwareScroll(Number.isFinite(args?.speedMs) ? args.speedMs : 50);
+        return { started: true };
+      }
+    },
+
+    "scroll.stop": {
+      description: "Stop auto-scrolling (if active)",
+      parameters: { type: "object", properties: {}, additionalProperties: false },
+      handler: async () => {
+        if (window.stopScroll) window.stopScroll();
+        return { stopped: true };
+      }
+    },
+
+    "quiz.start": {
+      description: "Start quiz from table data",
+      parameters: {
+        type: "object",
+        properties: { level: { type: "string", enum: ["beginner", "advanced"] } },
+        required: ["level"],
+        additionalProperties: false
+      },
+      handler: async (args) => {
+        if (!CONFIG.enableMdQuizz) throw new Error("Quiz disabled by config");
+        startQuiz(args.level === "advanced");
+        return { started: true, level: args.level };
+      }
+    },
+
+    "privacy.open": {
+      description: "Open privacy/GDPR popup (if enabled)",
+      parameters: { type: "object", properties: {}, additionalProperties: false },
+      handler: async () => {
+        showPrivacyPopup();
+        return { opened: true };
+      }
+    },
+
+    "sandbox.open": {
+      description: "Open JS sandbox (if enabled)",
+      parameters: { type: "object", properties: {}, additionalProperties: false },
+      handler: async () => {
+        if (!CONFIG.enableJsSandbox) throw new Error("Sandbox disabled by config");
+        const s = createJsSandbox();
+        if (s) document.body.appendChild(s);
+        return { opened: !!s };
+      }
+    },
+
+    "sandbox.close": {
+      description: "Close JS sandbox if open",
+      parameters: { type: "object", properties: {}, additionalProperties: false },
+      handler: async () => {
+        const el = document.getElementById("kizuna-js-sandbox");
+        if (el) el.remove();
+        return { closed: true };
+      }
+    },
+
+    "sandbox.execute": {
+      description: "Execute the JS currently in the sandbox textarea",
+      parameters: { type: "object", properties: {}, additionalProperties: false },
+      handler: async () => {
+        requireSandboxOpen();
+        window.kizunaExecuteScript(btnById("kizuna-sbx-exec"));
+        return { executed: true };
+      }
+    },
+
+    "sandbox.clear": {
+      description: "Clear sandbox textarea and output",
+      parameters: { type: "object", properties: {}, additionalProperties: false },
+      handler: async () => {
+        requireSandboxOpen();
+        window.kizunaClearSandbox(btnById("kizuna-sbx-clear"));
+        return { cleared: true };
+      }
+    },
+
+    "sandbox.copyOutput": {
+      description: "Copy sandbox output to clipboard",
+      parameters: { type: "object", properties: {}, additionalProperties: false },
+      handler: async () => {
+        requireSandboxOpen();
+        window.kizunaCopyOutput(btnById("kizuna-sbx-copy"));
+        return { copied: true };
+      }
+    },
+
+    "sandbox.addPinyin": {
+      description: "Add pinyin to Chinese characters on the page (requires pinyinPro loaded)",
+      parameters: { type: "object", properties: {}, additionalProperties: false },
+      handler: async () => {
+        requireSandboxOpen();
+        window.kizunaAddPinyin(btnById("kizuna-sbx-pinyin"));
+        return { done: true };
+      }
+    },
+
+    "sandbox.exploreIndexedDB": {
+      description: "Explore IndexedDB and show modal output",
+      parameters: { type: "object", properties: {}, additionalProperties: false },
+      handler: async () => {
+        requireSandboxOpen();
+        await window.kizunaExploreIndexedDB(btnById("kizuna-sbx-idb"));
+        return { opened: true };
+      }
+    },
+
+    "pwa.installPrompt.open": {
+      description: "Trigger PWA install prompt if available",
+      parameters: { type: "object", properties: {}, additionalProperties: false },
+      handler: async () => {
+        if (window.matchMedia("(display-mode: standalone)").matches) {
+          throw new Error("Already installed");
+        }
+        if (!deferredPrompt) throw new Error("Install prompt not available");
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        return { outcome };
+      }
+    },
+
+    "page.reload": {
+      description: "Reload current page",
+      parameters: {
+        type: "object",
+        properties: { hard: { type: "boolean" } },
+        additionalProperties: false
+      },
+      handler: async (args) => {
+        args?.hard ? window.location.replace(window.location.href) : window.location.reload();
+        return { reloading: true };
+      }
+    },
+
+    "nav.kahiether": {
+      description: "Open kahiether.com in new tab",
+      parameters: { type: "object", properties: {}, additionalProperties: false },
+      handler: async () => {
+        const w = window.open("https://kahiether.com/", "_blank");
+        if (w) w.opener = null;
+        return { opened: true };
+      }
+    },
+
+    "data.clear.confirmOpen": {
+      description: "Open the clear-all-data confirmation popup",
+      parameters: { type: "object", properties: {}, additionalProperties: false },
+      handler: async () => {
+        showClearDataConfirmation();
+        return { opened: true };
+      }
+    },
+
+    "data.clear.execute": {
+      description: "Clear all local data now and reload",
+      parameters: { type: "object", properties: {}, additionalProperties: false },
+      handler: async () => {
+        const ok = await clearAllData();
+        setTimeout(() => window.location.reload(true), 250);
+        return { cleared: !!ok };
+      }
+    }
+  };
+
+  // Discovery
+  window.kizuna_list_actions = function () {
+    return {
+      tools: Object.entries(TOOLS).map(([name, t]) => ({
+        name,
+        description: t.description,
+        parameters: t.parameters
+      })),
+      state: kizuna_state()
+    };
+  };
+
+  // Function-calling entrypoint
+  // call: { name: string, arguments?: object }
+  window.kizuna_call = async function (call) {
+    try {
+      const name = call?.name;
+      const args = call?.arguments || {};
+      const tool = TOOLS[name];
+
+      if (!tool) {
+        return {
+          ok: false,
+          error: "unknown_tool",
+          available: Object.keys(TOOLS),
+          state: kizuna_state()
+        };
+      }
+
+      console.info("[KIZUNA_FC]", { name, ts: Date.now(), argsKeys: Object.keys(args || {}) });
+
+      const result = await tool.handler(args);
+      return { ok: true, result: result ?? null, state: kizuna_state() };
+    } catch (e) {
+      return { ok: false, error: "tool_failed", message: String(e?.message || e), state: kizuna_state() };
+    }
+  };
+})();
+// ===== /KIZUNA FUNCTION-CALLING BRIDGE =====
+
+
+
+
+
+
+
     // Start initialization
     init();
 })();
+
 
 
 
