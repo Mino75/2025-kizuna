@@ -12,6 +12,7 @@
 - [⚙️ Configuration](#️-configuration)
 - [🔧 API Endpoints](#-api-endpoints)
 - [🌐 Integration Examples](#-integration-examples)
+- [🤖 Function-Calling API](#-function-calling-api)
 - [📄 License](#-license)
 
 ## 📖 About
@@ -240,6 +241,112 @@ Regardless of configuration, these features are always enabled:
 - **Reload Page**: Quick page refresh
 - **Add Pinyin**: Chinese character support
 - **Kahiether Link**: Link to service provider
+
+
+## 🤖 Function-Calling API
+
+Kizuna includes a programmatic function-calling bridge for automation and integration. All functions are available via the global `window` object.
+
+### Discovery
+```javascript
+// List all available actions
+const info = window.kizuna_list_actions();
+console.log(info.tools);  // Array of available tools
+console.log(info.state);  // Current Kizuna state
+```
+
+### Function Calling
+```javascript
+// Execute a Kizuna action
+const result = await window.kizuna_call({
+  name: "timer.open",
+  arguments: {}
+});
+
+console.log(result.ok);      // true/false
+console.log(result.result);  // Action-specific result
+console.log(result.state);   // Updated state
+```
+
+### Available Functions
+
+#### Timer Control
+- **`timer.open`** - Open the timer/chrono widget
+
+#### Scroll Control
+- **`scroll.start`** - Start auto-scrolling (optional `speedMs` parameter)
+- **`scroll.stop`** - Stop auto-scrolling
+
+#### Quiz Control
+- **`quiz.start`** - Start quiz (`level`: "beginner" or "advanced")
+
+#### Privacy
+- **`privacy.open`** - Open privacy/GDPR popup (if enabled)
+
+#### Sandbox Control
+- **`sandbox.open`** - Open JS sandbox (if enabled)
+- **`sandbox.close`** - Close JS sandbox
+- **`sandbox.execute`** - Execute code in sandbox textarea
+- **`sandbox.clear`** - Clear sandbox textarea and output
+- **`sandbox.copyOutput`** - Copy output to clipboard
+- **`sandbox.addPinyin`** - Add pinyin to page content
+- **`sandbox.exploreIndexedDB`** - Explore IndexedDB databases
+
+#### PWA
+- **`pwa.installPrompt.open`** - Trigger PWA install prompt
+
+#### Navigation
+- **`page.reload`** - Reload page (optional `hard`: boolean)
+- **`nav.kahiether`** - Open kahiether.com in new tab
+
+#### Data Management
+- **`data.clear.confirmOpen`** - Open clear-all-data confirmation
+- **`data.clear.execute`** - Clear all local data and reload
+
+### State Information
+The state object includes:
+```javascript
+{
+  features: {
+    mdQuiz: boolean,
+    jsSandbox: boolean,
+    privacy: boolean
+  },
+  pwa: {
+    isStandalone: boolean,
+    hasInstallPrompt: boolean
+  },
+  ui: {
+    hasQuiz: boolean,
+    hasSandbox: boolean,
+    canStopScroll: boolean
+  }
+}
+```
+
+### Example Usage
+```javascript
+// Open timer and start quiz
+await window.kizuna_call({ name: "timer.open" });
+await window.kizuna_call({ 
+  name: "quiz.start", 
+  arguments: { level: "advanced" } 
+});
+
+// Start auto-scroll with custom speed
+await window.kizuna_call({ 
+  name: "scroll.start", 
+  arguments: { speedMs: 30 } 
+});
+
+// Check if sandbox is available
+const info = window.kizuna_list_actions();
+if (info.state.features.jsSandbox) {
+  await window.kizuna_call({ name: "sandbox.open" });
+}
+```
+
+
 
 ## 🔐 Privacy & Security
 
