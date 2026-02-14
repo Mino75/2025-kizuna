@@ -1276,6 +1276,27 @@ window.kizunaAddPinyin = function(btn) {
     };
   }
 
+// REGISTER EXTERNAL TOOLS
+    
+window.__kizuna_tools = TOOLS;
+
+window.kizuna_register_tools = function(namespace, toolsObj) {
+  if (!namespace || typeof namespace !== "string") throw new Error("Namespace required");
+  if (!toolsObj || typeof toolsObj !== "object") throw new Error("Tools object required");
+
+  Object.entries(toolsObj).forEach(([name, def]) => {
+    const fullName = `${namespace}.${name}`;
+    if (TOOLS[fullName]) {
+      throw new Error(`Tool already exists: ${fullName}`);
+    }
+    TOOLS[fullName] = def;
+  });
+
+  return { registered: Object.keys(toolsObj).length };
+};
+
+//TOOLS
+    
 function requireTimer() {
     const el = document.querySelector('.kizuna-timer-box');
     if (!el) throw new Error("Timer widget is not open");
@@ -1642,40 +1663,74 @@ function requireEl(selector) {
 })();
 
 
+
+
+
 // ===== /KIZUNA FUNCTION-CALLING BRIDGE =====
 /**
  * PostMessage API Exposure
- * Allows any iframed instance to trigger Kizuna actions
+ * Allows any iframed instance  with origin to trigger Kizuna actions
  */
 
 window.addEventListener('message', async (event) => {
-    // Basic check to ensure the message format is what we expect
-    if (event.data && event.data.type === 'KIZUNA_CALL') {
-        const { call, requestId } = event.data;
-        
-        console.log('[KIZUNA_BRIDGE] Received cross-domain call:', call.name);
+    // 1️⃣ Origin must be explicit and non-opaque
+    if (!event.origin || event.origin === 'null') {
+        return;
+    }
 
-        try {
-            // Execute the existing function-calling bridge
-            const response = await window.kizuna_call(call);
-            
-            // Send the result back to the iframe that sent the request
-            if (event.source) {
-                event.source.postMessage({
+    // 2️⃣ Basic payload validation
+    if (!event.data || event.data.type !== 'KIZUNA_CALL') {
+        return;
+    }
+
+    const { call, requestId } = event.data;
+
+    if (!call || typeof call.name !== 'string') {
+        return;
+    }
+
+    console.log('[KIZUNA_BRIDGE] Received cross-domain call:', call.name);
+
+    try {
+        // 3️⃣ Execute bridge
+        const response = await window.kizuna_call(call);
+
+        // 4️⃣ Reply only to the exact origin (never '*')
+        if (event.source && typeof event.source.postMessage === 'function') {
+            event.source.postMessage(
+                {
                     type: 'KIZUNA_RESPONSE',
-                    requestId: requestId, // To help the iframe match the response
-                    response: response
-                }, event.origin || '*');
-            }
-        } catch (error) {
-            console.error('[KIZUNA_BRIDGE] PostMessage Execution Error:', error);
+                    requestId,
+                    response
+                },
+                event.origin
+            );
+        }
+
+    } catch (error) {
+        console.error('[KIZUNA_BRIDGE] PostMessage Execution Error:', error);
+
+        if (event.source && typeof event.source.postMessage === 'function') {
+            event.source.postMessage(
+                {
+                    type: 'KIZUNA_RESPONSE',
+                    requestId,
+                    response: {
+                        ok: false,
+                        error: 'bridge_execution_failed'
+                    }
+                },
+                event.origin
+            );
         }
     }
 });
 
 
 
+
     // Start initialization
     init();
 })();
+
 
