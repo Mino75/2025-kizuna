@@ -1276,26 +1276,8 @@ window.kizunaAddPinyin = function(btn) {
     };
   }
 
-// REGISTER EXTERNAL TOOLS
-    
-window.__kizuna_tools = TOOLS;
 
-window.kizuna_register_tools = function(namespace, toolsObj) {
-  if (!namespace || typeof namespace !== "string") throw new Error("Namespace required");
-  if (!toolsObj || typeof toolsObj !== "object") throw new Error("Tools object required");
-
-  Object.entries(toolsObj).forEach(([name, def]) => {
-    const fullName = `${namespace}.${name}`;
-    if (TOOLS[fullName]) {
-      throw new Error(`Tool already exists: ${fullName}`);
-    }
-    TOOLS[fullName] = def;
-  });
-
-  return { registered: Object.keys(toolsObj).length };
-};
-
-//TOOLS
+//require
     
 function requireTimer() {
     const el = document.querySelector('.kizuna-timer-box');
@@ -1623,6 +1605,27 @@ function requireEl(selector) {
     }
   };
 
+
+
+// REGISTER EXTERNAL TOOLS
+    
+window.__kizuna_tools = TOOLS;
+
+window.kizuna_register_tools = function(namespace, toolsObj) {
+  if (!namespace || typeof namespace !== "string") throw new Error("Namespace required");
+  if (!toolsObj || typeof toolsObj !== "object") throw new Error("Tools object required");
+
+  Object.entries(toolsObj).forEach(([name, def]) => {
+    const fullName = `${namespace}.${name}`;
+    if (TOOLS[fullName]) {
+      throw new Error(`Tool already exists: ${fullName}`);
+    }
+    TOOLS[fullName] = def;
+  });
+
+  return { registered: Object.keys(toolsObj).length };
+};
+
   // Discovery
   window.kizuna_list_actions = function () {
     return {
@@ -1634,7 +1637,8 @@ function requireEl(selector) {
       state: kizuna_state()
     };
   };
-
+    
+    
   // Function-calling entrypoint
   // call: { name: string, arguments?: object }
   window.kizuna_call = async function (call) {
@@ -1732,5 +1736,6 @@ window.addEventListener('message', async (event) => {
     // Start initialization
     init();
 })();
+
 
 
