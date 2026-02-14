@@ -13,6 +13,7 @@
 - [🔧 API Endpoints](#-api-endpoints)
 - [🌐 Integration Examples](#-integration-examples)
 - [🤖 Function-Calling API](#-function-calling-api)
+- [📨 PostMessage API](#-postmessage-api)
 - [📄 License](#-license)
 
 ## 📖 About
@@ -270,8 +271,22 @@ console.log(result.state);   // Updated state
 
 ### Available Functions
 
+#### UI Simulation
+- **`mouse.simulate`** - Simulate mouse interactions
+  - `selector` (string): CSS selector for target element
+  - `action` (string): "click", "rightClick", "hover", or "unhover"
+- **`keyboard.simulate`** - Simulate keyboard input
+  - `selector` (string): CSS selector for target element
+  - `action` (string): "fill" or "pressKey"
+  - `text` (string): Text to fill or key to press
+
 #### Timer Control
 - **`timer.open`** - Open the timer/chrono widget
+- **`timer.close`** - Close the timer widget
+- **`timer.start`** - Trigger the Start button
+- **`timer.reset`** - Reset the timer/chrono count
+- **`timer.setMode`** - Switch between modes (`mode`: "timer" or "chrono")
+- **`timer.testRing`** - Test the native completion sound
 
 #### Scroll Control
 - **`scroll.start`** - Start auto-scrolling (optional `speedMs` parameter)
@@ -326,6 +341,26 @@ The state object includes:
 
 ### Example Usage
 ```javascript
+
+// Simulate clicking a button
+await window.kizuna_call({
+  name: "mouse.simulate",
+  arguments: {
+    selector: "#my-button",
+    action: "click"
+  }
+});
+
+// Fill an input field
+await window.kizuna_call({
+  name: "keyboard.simulate",
+  arguments: {
+    selector: "#email-input",
+    action: "fill",
+    text: "user@example.com"
+  }
+});
+
 // Open timer and start quiz
 await window.kizuna_call({ name: "timer.open" });
 await window.kizuna_call({ 
@@ -345,6 +380,7 @@ if (info.state.features.jsSandbox) {
   await window.kizuna_call({ name: "sandbox.open" });
 }
 ```
+
 
 
 
