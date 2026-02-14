@@ -1301,7 +1301,23 @@ function requireEl(selector) {
   }
 
   const TOOLS = {
-    "mouse.simulate": {
+        "meta.ping": {
+      description: "No-op healthcheck (safe discovery probe)",
+      parameters: { type: "object", properties: {}, additionalProperties: false },
+      handler: async () => {
+        return { ok: true, app: "kizuna", ts: Date.now() };
+      }
+    },
+    
+    "meta.listActions": {
+      description: "Return available tools and current state (discovery)",
+      parameters: { type: "object", properties: {}, additionalProperties: false },
+      handler: async () => {
+        // Returns { tools: [...], state: {...} }
+        return window.kizuna_list_actions();
+      }
+    },
+      "mouse.simulate": {
       description: "Simulate mouse interactions (click, right-click, hover)",
       parameters: {
         type: "object",
@@ -1664,6 +1680,7 @@ window.addEventListener('message', async (event) => {
     // Start initialization
     init();
 })();
+
 
 
 
