@@ -151,16 +151,55 @@ function setMenuLabel(btn, key) {
 
     console.log('Kizuna initialized with config:', CONFIG);
 
+
+// Play Native Ring
+
+function playNativeRing() {
+    try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        const playBeep = (startTime, frequency) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.type = 'sine'; // Smooth beep
+            osc.frequency.setValueAtTime(frequency, startTime);
+            
+            gain.gain.setValueAtTime(0, startTime);
+            gain.gain.linearRampToValueAtTime(0.2, startTime + 0.05);
+            gain.gain.linearRampToValueAtTime(0, startTime + 0.3);
+            
+            osc.start(startTime);
+            osc.stop(startTime + 0.3);
+        };
+
+        // Play a "Beep-Beep" sequence
+        playBeep(audioCtx.currentTime, 880);      // High pitch
+        playBeep(audioCtx.currentTime + 0.4, 880); // Second beep
+        
+    } catch (e) {
+        console.warn("Web Audio not supported or blocked", e);
+    }
+}
+
+// ===========================================================================
 // Spawn Timer
 
 function spawnTimer() {
-  const timerBox = document.createElement('div');
-  timerBox.className = 'kizuna-timer-box';
+    // Prevent multiple timers
+    const existing = document.querySelector('.kizuna-timer-box');
+    if (existing) return;
 
-  timerBox.innerHTML = `
+    const timerBox = document.createElement('div');
+    timerBox.className = 'kizuna-timer-box';
+
+    timerBox.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
       <strong>Timer</strong>
-      <button style="background:red;color:white;border:none;border-radius:4px;cursor:pointer;font-size:14px;">✖</button>
+      <button class="close-btn" style="background:red;color:white;border:none;border-radius:4px;cursor:pointer;font-size:14px;">✖</button>
     </div>
     <div style="flex-grow:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:6px;">
       <div>
@@ -175,56 +214,79 @@ function spawnTimer() {
     <button id="startBtn" style="width:100%;background:#007bff;color:white;border:none;border-radius:5px;padding:6px;font-size:15px;cursor:pointer;">Start</button>
   `;
 
-  document.body.appendChild(timerBox);
+    document.body.appendChild(timerBox);
 
-  const closeBtn = timerBox.querySelector('button');
-  const startBtn = timerBox.querySelector('#startBtn');
-  const display = timerBox.querySelector('#display');
-  const inputDiv = timerBox.querySelector('#timeInput');
-  const input = inputDiv.querySelector('input');
-  const radios = timerBox.querySelectorAll('input[name=mode]');
-  let interval, seconds = 0;
+    const startBtn = timerBox.querySelector('#startBtn');
+    const display = timerBox.querySelector('#display');
+    const inputDiv = timerBox.querySelector('#timeInput');
+    const input = inputDiv.querySelector('input');
+    const radios = timerBox.querySelectorAll('input[name=mode]');
+    let interval, seconds = 0;
 
-  closeBtn.onclick = () => timerBox.remove();
-
-  radios.forEach(radio => {
-    radio.onchange = () => {
-      inputDiv.style.display = (radio.value === 'chrono' && radio.checked) ? 'none' : 'block';
+    // --- Exposed kizuna hooks for bridge control ---
+    timerBox.kizunaClose = () => {
+        clearInterval(interval);
+        timerBox.remove();
     };
-  });
 
-  startBtn.onclick = () => {
-    clearInterval(interval);
-    const mode = [...radios].find(r => r.checked).value;
-    if (mode === 'timer') {
-      seconds = Number(input.value) * 60;
-      updateDisplay();
-      interval = setInterval(() => {
-        seconds--;
-        updateDisplay();
-        if (seconds <= 0) {
-          clearInterval(interval);
-          display.textContent = 'Done';
+    timerBox.kizunaSetMode = (mode) => {
+        const target = [...radios].find(r => r.value === mode);
+        if (target) {
+            target.checked = true;
+            inputDiv.style.display = (mode === 'chrono') ? 'none' : 'block';
         }
-      }, 1000);
-    } else {
-      seconds = 0;
-      interval = setInterval(() => {
-        seconds++;
-        updateDisplay();
-      }, 1000);
+    };
+
+    timerBox.kizunaStart = () => startBtn.click();
+
+    timerBox.kizunaReset = () => {
+        clearInterval(interval);
+        seconds = 0;
+        display.textContent = '00:00';
+    };
+
+    // --- Internal Logic ---
+    timerBox.querySelector('.close-btn').onclick = () => timerBox.kizunaClose();
+
+    radios.forEach(radio => {
+        radio.onchange = () => {
+            inputDiv.style.display = (radio.value === 'chrono' && radio.checked) ? 'none' : 'block';
+        };
+    });
+
+    startBtn.onclick = () => {
+        clearInterval(interval);
+        const mode = [...radios].find(r => r.checked).value;
+        if (mode === 'timer') {
+            seconds = Number(input.value) * 60;
+            updateDisplay();
+            interval = setInterval(() => {
+                seconds--;
+                updateDisplay();
+                if (seconds <= 0) {
+                    clearInterval(interval);
+                    display.textContent = 'Done';
+                    playNativeRing(); // Play sound when finished
+                }
+            }, 1000);
+        } else {
+            seconds = 0;
+            interval = setInterval(() => {
+                seconds++;
+                updateDisplay();
+            }, 1000);
+        }
+    };
+
+    function updateDisplay() {
+        const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+        const s = (seconds % 60).toString().padStart(2, '0');
+        display.textContent = `${m}:${s}`;
     }
-  };
 
-  function updateDisplay() {
-    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
-    const s = (seconds % 60).toString().padStart(2, '0');
-    display.textContent = `${m}:${s}`;
-  }
-
-  makeDraggable(timerBox);
+    makeDraggable(timerBox);
 }
-
+// make draggeable
 
 function makeDraggable(el) {
     let isDown = false, offset = [0,0];
@@ -241,7 +303,7 @@ function makeDraggable(el) {
     });
 }
 
-
+// ===========================================================================
 // Load pinyinPro dynamically
 function loadPinyinPro(callback) {
     // Avoid loading twice
@@ -1214,6 +1276,18 @@ window.kizunaAddPinyin = function(btn) {
     };
   }
 
+function requireTimer() {
+    const el = document.querySelector('.kizuna-timer-box');
+    if (!el) throw new Error("Timer widget is not open");
+    return el;
+  }
+
+function requireEl(selector) {
+    const el = document.querySelector(selector);
+    if (!el) throw new Error(`Target element not found: ${selector}`);
+    return el;
+  }
+    
   function requireSandboxOpen() {
     const sandbox = document.getElementById("kizuna-js-sandbox");
     if (!sandbox) throw new Error("Sandbox not open");
@@ -1227,6 +1301,62 @@ window.kizunaAddPinyin = function(btn) {
   }
 
   const TOOLS = {
+    "mouse.simulate": {
+      description: "Simulate mouse interactions (click, right-click, hover)",
+      parameters: {
+        type: "object",
+        properties: {
+          selector: { type: "string" },
+          action: { type: "string", enum: ["click", "rightClick", "hover", "unhover"] }
+        },
+        required: ["selector", "action"]
+      },
+      handler: async (args) => {
+        const el = requireEl(args.selector);
+        if (args.action === "click") {
+          el.click();
+        } else if (args.action === "rightClick") {
+          el.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true, view: window }));
+        } else if (args.action === "hover") {
+          el.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+          el.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+        } else if (args.action === "unhover") {
+          el.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
+        }
+        return { ok: true, action: args.action, target: args.selector };
+      }
+    },
+    "keyboard.simulate": {
+      description: "Fill inputs or simulate key presses (Enter, etc.)",
+      parameters: {
+        type: "object",
+        properties: {
+          selector: { type: "string" },
+          action: { type: "string", enum: ["fill", "pressKey"] },
+          text: { type: "string" }
+        },
+        required: ["selector", "action", "text"]
+      },
+      handler: async (args) => {
+        const el = requireEl(args.selector);
+        el.focus();
+
+        if (args.action === "fill") {
+          // Works for input, textarea, and contenteditable
+          if (el.isContentEditable) {
+            el.innerText = args.text;
+          } else {
+            el.value = args.text;
+          }
+          el.dispatchEvent(new Event('input', { bubbles: true }));
+          el.dispatchEvent(new Event('change', { bubbles: true }));
+        } else if (args.action === "pressKey") {
+          const ev = new KeyboardEvent('keydown', { key: args.text, bubbles: true, cancelable: true });
+          el.dispatchEvent(ev);
+        }
+        return { ok: true, action: args.action, target: args.selector };
+      }
+    },
     "timer.open": {
       description: "Open the timer/chrono widget",
       parameters: { type: "object", properties: {}, additionalProperties: false },
@@ -1235,7 +1365,52 @@ window.kizunaAddPinyin = function(btn) {
         return { opened: true };
       }
     },
-
+"timer.close": {
+      description: "Close the timer widget if open",
+      parameters: { type: "object", properties: {}, additionalProperties: false },
+      handler: async () => {
+        const el = document.querySelector('.kizuna-timer-box');
+        if (el?.kizunaClose) el.kizunaClose();
+        return { closed: true };
+      }
+    },
+    "timer.start": {
+      description: "Trigger the Start button on the timer",
+      parameters: { type: "object", properties: {}, additionalProperties: false },
+      handler: async () => {
+        requireTimer().kizunaStart();
+        return { started: true };
+      }
+    },
+    "timer.reset": {
+      description: "Reset the current timer/chrono count",
+      parameters: { type: "object", properties: {}, additionalProperties: false },
+      handler: async () => {
+        requireTimer().kizunaReset();
+        return { reset: true };
+      }
+    },
+    "timer.setMode": {
+      description: "Switch between Timer and Chrono modes",
+      parameters: {
+        type: "object",
+        properties: { mode: { type: "string", enum: ["timer", "chrono"] } },
+        required: ["mode"],
+        additionalProperties: false
+      },
+      handler: async (args) => {
+        requireTimer().kizunaSetMode(args.mode);
+        return { modeSet: args.mode };
+      }
+    },
+    "timer.testRing": {
+      description: "Test the native completion sound",
+      parameters: { type: "object", properties: {}, additionalProperties: false },
+      handler: async () => {
+        playNativeRing();
+        return { soundPlayed: true };
+      }
+    },      
     "scroll.start": {
       description: "Start auto-scrolling down the page",
       parameters: {
@@ -1489,6 +1664,7 @@ window.addEventListener('message', async (event) => {
     // Start initialization
     init();
 })();
+
 
 
 
