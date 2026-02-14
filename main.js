@@ -1189,6 +1189,11 @@ window.kizunaAddPinyin = function(btn) {
 
 
 // ===== KIZUNA FUNCTION-CALLING BRIDGE (stable IDs, no arming) =====
+
+
+
+//Function calling - the smallest element in Kahiether architecture is a function
+
 (function initKizunaFunctionCalling() {
   function kizuna_state() {
     return {
@@ -1444,9 +1449,38 @@ window.kizunaAddPinyin = function(btn) {
     }
   };
 })();
+
+
 // ===== /KIZUNA FUNCTION-CALLING BRIDGE =====
+/**
+ * PostMessage API Exposure
+ * Allows any iframed instance to trigger Kizuna actions
+ */
 
+window.addEventListener('message', async (event) => {
+    // Basic check to ensure the message format is what we expect
+    if (event.data && event.data.type === 'KIZUNA_CALL') {
+        const { call, requestId } = event.data;
+        
+        console.log('[KIZUNA_BRIDGE] Received cross-domain call:', call.name);
 
+        try {
+            // Execute the existing function-calling bridge
+            const response = await window.kizuna_call(call);
+            
+            // Send the result back to the iframe that sent the request
+            if (event.source) {
+                event.source.postMessage({
+                    type: 'KIZUNA_RESPONSE',
+                    requestId: requestId, // To help the iframe match the response
+                    response: response
+                }, event.origin || '*');
+            }
+        } catch (error) {
+            console.error('[KIZUNA_BRIDGE] PostMessage Execution Error:', error);
+        }
+    }
+});
 
 
 
@@ -1455,6 +1489,7 @@ window.kizunaAddPinyin = function(btn) {
     // Start initialization
     init();
 })();
+
 
 
 
