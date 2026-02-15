@@ -1674,7 +1674,7 @@ window.kizuna_register_tools = function(namespace, toolsObj) {
 // ===== /KIZUNA FUNCTION-CALLING BRIDGE =====
 /**
  * PostMessage API Exposure
- * Allows any iframed instance  with origin to trigger Kizuna actions
+ * Allows iframed instance with origin to trigger Kizuna actions
  */
 
 window.addEventListener('message', async (event) => {
@@ -1735,4 +1735,5 @@ window.addEventListener('message', async (event) => {
     // Start initialization
     init();
 })();
+
 
