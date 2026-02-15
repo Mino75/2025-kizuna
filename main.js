@@ -44,7 +44,7 @@ function runAnimalEmoji(fromEl) {
     yOffsetPx: 0,
 
     // Jumps
-    minHops: 1,
+    minHops: 0,
     maxHops: 3,
     jumpHeightMinPx: 25,
     jumpHeightMaxPx: 30,
@@ -1735,5 +1735,6 @@ window.addEventListener('message', async (event) => {
     // Start initialization
     init();
 })();
+
 
 
