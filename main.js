@@ -538,8 +538,6 @@ function showModal(content) {
     document.body.appendChild(modal);
 }
 
-
-
     // Privacy popup
     function showPrivacyPopup() {
         if (!CONFIG.enablePrivacy) return;
@@ -548,7 +546,17 @@ function showModal(content) {
         popup.id = 'kizuna-privacy-popup';
         popup.innerHTML = `
         
-            <div class="kizuna-privacy-content">
+            <div class="kizuna-privacy-content" 
+            style="
+            background:#111;
+            color:#ffffff;
+            padding:20px;
+            border-radius:12px;
+            max-width:800px;
+            max-height:80vh;
+            overflow:auto;
+            box-shadow:0 20px 60px rgba(0,0,0,0.6);
+            ">
                 <h3>Privacy & GDPR Compliance</h3>
                 <p>Your privacy is important to us. This application is designed to comply with the General Data Protection Regulation (GDPR) and to ensure that your personal data remains under your control at all times.</p>        
                 <p><strong>Data Storage:</strong> No personal data is ever transmitted or stored on our servers. All information generated or used by this application is kept exclusively within your own browser and device. You remain in full control of your data at all times.</p>        
@@ -1248,13 +1256,9 @@ window.kizunaAddPinyin = function(btn) {
     }
 
 
+// ===== KIZUNA FUNCTION-CALLING BRIDGE  =====
 
-
-// ===== KIZUNA FUNCTION-CALLING BRIDGE (stable IDs, no arming) =====
-
-
-
-//Function calling - the smallest element in Kahiether architecture is a function
+//Function calling - 
 
 (function initKizunaFunctionCalling() {
   function kizuna_state() {
@@ -1667,9 +1671,6 @@ window.kizuna_register_tools = function(namespace, toolsObj) {
 })();
 
 
-
-
-
 // ===== /KIZUNA FUNCTION-CALLING BRIDGE =====
 /**
  * PostMessage API Exposure
@@ -1731,11 +1732,7 @@ window.addEventListener('message', async (event) => {
 });
 
 
-
-
     // Start initialization
     init();
 })();
-
-
 
