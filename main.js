@@ -1237,6 +1237,74 @@ window.kizunaAddPinyin = function(btn) {
         console.log('Kizuna menu created successfully');
     }
 
+//----------------------------------- MODULES LOAD
+{
+  // List of remote modules to embed (URLs only)
+  var EMBED_MODULE_URLS = [
+    "https://changtan.kahiether.com/main.js"
+    // ,"https://another-module.kahiether.com/main.js"
+  ];
+
+  var DEFAULT_TIMEOUT_MS = 3500;
+
+  try {
+    if (!Array.isArray(EMBED_MODULE_URLS)) EMBED_MODULE_URLS = [];
+
+    var chain = Promise.resolve();
+
+    EMBED_MODULE_URLS.forEach(function (url) {
+      chain = chain.then(function () {
+        return new Promise(function (resolve) {
+          try {
+            if (!url) return resolve();
+
+            // De-dupe purely via DOM (no window globals)
+            var key = String(url);
+            var selector = 'script[data-embed-url="' + CSS.escape(key) + '"]';
+            if (document.querySelector(selector)) return resolve();
+
+            var s = document.createElement("script");
+            s.async = true;
+            s.defer = true;
+            s.src = key;
+            s.dataset.embedUrl = key;
+
+            var done = false;
+            var t = setTimeout(function () {
+              if (done) return;
+              done = true;
+              try { s.remove(); } catch (_) {}
+              resolve();
+            }, DEFAULT_TIMEOUT_MS);
+
+            s.onload = function () {
+              if (done) return;
+              done = true;
+              clearTimeout(t);
+              resolve();
+            };
+
+            s.onerror = function () {
+              if (done) return;
+              done = true;
+              clearTimeout(t);
+              try { s.remove(); } catch (_) {}
+              resolve();
+            };
+
+            document.head.appendChild(s);
+          } catch (_) {
+            resolve();
+          }
+        });
+      });
+    });
+
+    chain.catch(function () {});
+  } catch (_) {}
+}
+
+
     // Initialize Kizuna
     function init() {
         console.log('Initializing Kizuna...');
@@ -1735,6 +1803,7 @@ window.addEventListener('message', async (event) => {
     // Start initialization
     init();
 })();
+
 
 
 
