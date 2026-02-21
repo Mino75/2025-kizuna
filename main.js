@@ -1,6 +1,7 @@
 (function() {
     'use strict';
 
+    //PWA install
      let deferredPrompt; // shared for both auto and manual install
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
@@ -8,10 +9,44 @@ window.addEventListener('beforeinstallprompt', e => {
   console.log('PWA install prompt captured early');
 });
 
+//Protection against over iframing and mass orchestration mess
+/ === Frame-depth gate (block if nested more than 2 levels) ===
+  function getFrameDepth(maxProbe = 10) {
+    // Depth: top => 0, inside iframe => 1, etc.
+    // We cap probing to avoid pathological cases.
+    let depth = 0;
+    let w = window;
 
+    for (let i = 0; i < maxProbe; i++) {
+      try {
+        if (w === w.parent) break;
+        depth++;
+        w = w.parent;
+      } catch (e) {
+        // Cross-origin parent: we know we're framed, but cannot climb further.
+        // Treat as "unknown beyond here" — safest is to block.
+        return Infinity;
+      }
+    }
+    return depth;
+  }
 
+  const depth = getFrameDepth();
+  const MAX_ALLOWED_DEPTH = 2;
 
+  if (depth > MAX_ALLOWED_DEPTH) {
+    // Block execution + display
+    try {
+      document.documentElement.style.display = 'none';
+    } catch (_) {}
+
+    // Hard stop: nothing else in this bundle should run
+    return;
+  }
     
+
+
+// CONSTANTS    
 const MENU_LABELS = {
   timer: "⏱️ TIMER",
   install: "📲 INSTALL",
@@ -1879,6 +1914,7 @@ window.addEventListener('message', async (event) => {
     // Start initialization
     init();
 })();
+
 
 
 
