@@ -10,7 +10,7 @@ window.addEventListener('beforeinstallprompt', e => {
 });
 
 //Protection against over iframing and mass orchestration mess
-/ === Frame-depth gate (block if nested more than 2 levels) ===
+// === Frame-depth gate (block if nested more than 2 levels) ===
   function getFrameDepth(maxProbe = 10) {
     // Depth: top => 0, inside iframe => 1, etc.
     // We cap probing to avoid pathological cases.
@@ -1929,6 +1929,7 @@ window.addEventListener('message', async (event) => {
     // Start initialization
     init();
 })();
+
 
 
 
