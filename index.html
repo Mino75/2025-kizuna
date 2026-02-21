@@ -563,6 +563,134 @@ for (let lang in languages) {
                 <p><strong>Safety:</strong> Requires user confirmation with detailed warning popup. Page automatically reloads after clearing.</p>
             </section>
 
+
+            <section class="demo" id="multi-elve-iframe-test" style="margin-top: 40px;">
+              <h3>🧪 Multi-Elve iFrame Test (Nested iFrame)</h3>
+              <p>
+                This section embeds <strong>https://mypa.kahiether.com/</strong> to validate multiple Elve iFrame behavior
+                when the target site is already an iframe host.
+              </p>
+            
+              <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin: 12px 0 16px;">
+                <button
+                  id="kizuna-capabilities-btn"
+                  type="button"
+                  style="
+                    appearance:none; border:0; cursor:pointer;
+                    padding:10px 14px; border-radius:10px;
+                    background:#667eea; color:#fff; font-weight:600;
+                    box-shadow:0 10px 25px rgba(0,0,0,0.15);
+                  "
+                  title="Send a KIZUNA_CALL to the iframe to list available capabilities"
+                >
+                  List iFrame Capabilities (postMessage)
+                </button>
+            
+                <span id="kizuna-capabilities-status" style="font-size: 0.95em; color:#444;">
+                  Status: idle
+                </span>
+              </div>
+            
+              <div style="border:2px solid #e9ecef; border-radius: 12px; overflow:hidden;">
+                <iframe
+                  id="elve-iframe-mypa"
+                  src="https://mypa.kahiether.com/"
+                  title="Kahiether MyPA (nested iframe test)"
+                  style="width:100%; height: 720px; border:0; display:block; background:#fff;"
+                  loading="lazy"
+                  referrerpolicy="no-referrer-when-downgrade"
+                  allow="clipboard-read; clipboard-write; fullscreen"
+                ></iframe>
+              </div>
+            
+              <details style="margin-top: 14px;">
+                <summary style="cursor:pointer; font-weight:600; color:#667eea;">
+                  Response payload (last)
+                </summary>
+                <pre id="kizuna-capabilities-output"
+                     style="margin-top:10px; white-space:pre-wrap; word-break:break-word; background:#2d2d2d; color:#f8f8f2; padding:14px; border-radius:10px; overflow:auto; max-height: 340px;"></pre>
+              </details>
+            </section>
+            
+            <script>
+              (function () {
+                const iframe = document.getElementById("elve-iframe-mypa");
+                const btn = document.getElementById("kizuna-capabilities-btn");
+                const statusEl = document.getElementById("kizuna-capabilities-status");
+                const outEl = document.getElementById("kizuna-capabilities-output");
+            
+                if (!iframe || !btn || !statusEl || !outEl) return;
+            
+                // Target origin MUST match the iframe origin (never '*')
+                const TARGET_ORIGIN = "https://mypa.kahiether.com";
+            
+                // Lightweight request/response correlation
+                let lastRequestId = null;
+                let timeoutHandle = null;
+            
+                function setStatus(text) {
+                  statusEl.textContent = "Status: " + text;
+                }
+            
+                function pretty(obj) {
+                  try { return JSON.stringify(obj, null, 2); } catch (_) { return String(obj); }
+                }
+            
+                window.addEventListener("message", (event) => {
+                  // Accept only from expected origin
+                  if (event.origin !== TARGET_ORIGIN) return;
+            
+                  const data = event.data;
+                  if (!data || data.type !== "KIZUNA_RESPONSE") return;
+                  if (!lastRequestId || data.requestId !== lastRequestId) return;
+            
+                  clearTimeout(timeoutHandle);
+                  timeoutHandle = null;
+            
+                  outEl.textContent = pretty(data);
+                  setStatus(data?.response?.ok ? "response received (ok)" : "response received (not ok)");
+                });
+            
+                btn.addEventListener("click", () => {
+                  if (!iframe.contentWindow) {
+                    setStatus("iframe not ready");
+                    return;
+                  }
+            
+                  // Ask the nested instance to list all tools/capabilities
+                  lastRequestId = "cap_" + Date.now() + "_" + Math.random().toString(16).slice(2);
+            
+                  const payload = {
+                    type: "KIZUNA_CALL",
+                    requestId: lastRequestId,
+                    call: {
+                      name: "meta.listActions",
+                      arguments: {}
+                    }
+                  };
+            
+                  outEl.textContent = "";
+                  setStatus("sending…");
+            
+                  // Send to the embedded origin explicitly
+                  iframe.contentWindow.postMessage(payload, TARGET_ORIGIN);
+            
+                  // Timeout guard (silent failure likely = no bridge in that context or origin mismatch)
+                  clearTimeout(timeoutHandle);
+                  timeoutHandle = setTimeout(() => {
+                    setStatus("timeout (no response)");
+                    outEl.textContent = pretty({
+                      note: "No KIZUNA_RESPONSE received within timeout.",
+                      sentTo: TARGET_ORIGIN,
+                      requestId: lastRequestId,
+                      hint: "If the embedded page is itself iframed/redirected, its effective origin may differ."
+                    });
+                  }, 3500);
+                });
+              })();
+            </script>
+
+            
             <section class="demo">
                 <h3>🌐 Browser Compatibility</h3>
                 <ul>
@@ -573,6 +701,7 @@ for (let lang in languages) {
                     <li>⚠️ PWA installation requires HTTPS and manifest.json</li>
                 </ul>
             </section>
+            
         </main>
 
         <footer>
@@ -584,4 +713,5 @@ for (let lang in languages) {
     <script defer src="/main.js?website-url=https://kizuna.kahiether.com&personalinfostored=no&enablemdquizz=yes&enablejssandbox=yes&enableprivacy=yes"></script>
 </body>
 </html>
+
 
