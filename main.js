@@ -1021,6 +1021,15 @@ window.kizunaAddPinyin = function(btn) {
     // Create menu
     function createMenu() {
         console.log('Creating Kizuna menu...');
+
+         // Hide burger when iframed at level 2 or more 
+          const d = getFrameDepth();
+        
+          // Depth >= 2 → no UI at all
+          if (d >= 2) {
+            console.log('[Kizuna] Depth >= 2 — UI fully suppressed');
+            return;
+          }
         
         const burger = document.createElement('div');
         burger.id = 'kizuna-burger';
@@ -1029,7 +1038,13 @@ window.kizunaAddPinyin = function(btn) {
         const menu = document.createElement('div');
         menu.id = 'kizuna-menu';
 
-
+        // Center iframed burger at level 1
+      if (d === 1) {
+        burger.style.position = "fixed";
+        burger.style.left = "50%";
+        burger.style.right = "auto";
+        burger.style.transform = "translateX(-50%)";
+      }
         
         // Add Timer button
         const timerBtn = document.createElement('button');
@@ -1914,6 +1929,7 @@ window.addEventListener('message', async (event) => {
     // Start initialization
     init();
 })();
+
 
 
 
