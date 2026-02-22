@@ -271,15 +271,6 @@ console.log(result.state);   // Updated state
 
 ### Available Functions
 
-#### UI Simulation
-- **`mouse.simulate`** - Simulate mouse interactions
-  - `selector` (string): CSS selector for target element
-  - `action` (string): "click", "rightClick", "hover", or "unhover"
-- **`keyboard.simulate`** - Simulate keyboard input
-  - `selector` (string): CSS selector for target element
-  - `action` (string): "fill" or "pressKey"
-  - `text` (string): Text to fill or key to press
-
 #### Timer Control
 - **`timer.open`** - Open the timer/chrono widget
 - **`timer.close`** - Close the timer widget
@@ -301,11 +292,8 @@ console.log(result.state);   // Updated state
 #### Sandbox Control
 - **`sandbox.open`** - Open JS sandbox (if enabled)
 - **`sandbox.close`** - Close JS sandbox
-- **`sandbox.execute`** - Execute code in sandbox textarea
 - **`sandbox.clear`** - Clear sandbox textarea and output
 - **`sandbox.copyOutput`** - Copy output to clipboard
-- **`sandbox.addPinyin`** - Add pinyin to page content
-- **`sandbox.exploreIndexedDB`** - Explore IndexedDB databases
 
 #### PWA
 - **`pwa.installPrompt.open`** - Trigger PWA install prompt
@@ -314,9 +302,6 @@ console.log(result.state);   // Updated state
 - **`page.reload`** - Reload page (optional `hard`: boolean)
 - **`nav.kahiether`** - Open kahiether.com in new tab
 
-#### Data Management
-- **`data.clear.confirmOpen`** - Open clear-all-data confirmation
-- **`data.clear.execute`** - Clear all local data and reload
 
 ### State Information
 The state object includes:
