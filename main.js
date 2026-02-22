@@ -1518,62 +1518,6 @@ function requireEl(selector) {
         return window.kizuna_list_actions();
       }
     },
-      "mouse.simulate": {
-      description: "Simulate mouse interactions (click, right-click, hover)",
-      parameters: {
-        type: "object",
-        properties: {
-          selector: { type: "string" },
-          action: { type: "string", enum: ["click", "rightClick", "hover", "unhover"] }
-        },
-        required: ["selector", "action"]
-      },
-      handler: async (args) => {
-        const el = requireEl(args.selector);
-        if (args.action === "click") {
-          el.click();
-        } else if (args.action === "rightClick") {
-          el.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true, view: window }));
-        } else if (args.action === "hover") {
-          el.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-          el.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
-        } else if (args.action === "unhover") {
-          el.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
-        }
-        return { ok: true, action: args.action, target: args.selector };
-      }
-    },
-    "keyboard.simulate": {
-      description: "Fill inputs or simulate key presses (Enter, etc.)",
-      parameters: {
-        type: "object",
-        properties: {
-          selector: { type: "string" },
-          action: { type: "string", enum: ["fill", "pressKey"] },
-          text: { type: "string" }
-        },
-        required: ["selector", "action", "text"]
-      },
-      handler: async (args) => {
-        const el = requireEl(args.selector);
-        el.focus();
-
-        if (args.action === "fill") {
-          // Works for input, textarea, and contenteditable
-          if (el.isContentEditable) {
-            el.innerText = args.text;
-          } else {
-            el.value = args.text;
-          }
-          el.dispatchEvent(new Event('input', { bubbles: true }));
-          el.dispatchEvent(new Event('change', { bubbles: true }));
-        } else if (args.action === "pressKey") {
-          const ev = new KeyboardEvent('keydown', { key: args.text, bubbles: true, cancelable: true });
-          el.dispatchEvent(ev);
-        }
-        return { ok: true, action: args.action, target: args.selector };
-      }
-    },
     "timer.open": {
       description: "Open the timer/chrono widget",
       parameters: { type: "object", properties: {}, additionalProperties: false },
@@ -1695,15 +1639,6 @@ function requireEl(selector) {
       }
     },
 
-    "sandbox.execute": {
-      description: "Execute the JS currently in the sandbox textarea",
-      parameters: { type: "object", properties: {}, additionalProperties: false },
-      handler: async () => {
-        requireSandboxOpen();
-        window.kizunaExecuteScript(btnById("kizuna-sbx-exec"));
-        return { executed: true };
-      }
-    },
 
     "sandbox.clear": {
       description: "Clear sandbox textarea and output",
@@ -1735,15 +1670,6 @@ function requireEl(selector) {
       }
     },
 
-    "sandbox.exploreIndexedDB": {
-      description: "Explore IndexedDB and show modal output",
-      parameters: { type: "object", properties: {}, additionalProperties: false },
-      handler: async () => {
-        requireSandboxOpen();
-        await window.kizunaExploreIndexedDB(btnById("kizuna-sbx-idb"));
-        return { opened: true };
-      }
-    },
 
     "pwa.installPrompt.open": {
       description: "Trigger PWA install prompt if available",
@@ -1780,25 +1706,6 @@ function requireEl(selector) {
         const w = window.open("https://kahiether.com/", "_blank");
         if (w) w.opener = null;
         return { opened: true };
-      }
-    },
-
-    "data.clear.confirmOpen": {
-      description: "Open the clear-all-data confirmation popup",
-      parameters: { type: "object", properties: {}, additionalProperties: false },
-      handler: async () => {
-        showClearDataConfirmation();
-        return { opened: true };
-      }
-    },
-
-    "data.clear.execute": {
-      description: "Clear all local data now and reload",
-      parameters: { type: "object", properties: {}, additionalProperties: false },
-      handler: async () => {
-        const ok = await clearAllData();
-        setTimeout(() => window.location.reload(true), 250);
-        return { cleared: !!ok };
       }
     }
   };
@@ -1929,6 +1836,7 @@ window.addEventListener('message', async (event) => {
     // Start initialization
     init();
 })();
+
 
 
 
